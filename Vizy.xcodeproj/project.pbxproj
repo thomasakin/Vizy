@@ -8,18 +8,36 @@
 
 /* Begin PBXBuildFile section */
 		114916192A16A245004B1926 /* VizyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916182A16A245004B1926 /* VizyApp.swift */; };
-		1149161B2A16A245004B1926 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149161A2A16A245004B1926 /* ContentView.swift */; };
 		1149161D2A16A250004B1926 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1149161C2A16A250004B1926 /* Assets.xcassets */; };
 		114916202A16A250004B1926 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1149161F2A16A250004B1926 /* Preview Assets.xcassets */; };
+		114916292A16A26E004B1926 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916282A16A26E004B1926 /* Task.swift */; };
+		1149162C2A16A28A004B1926 /* TaskStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149162B2A16A28A004B1926 /* TaskStore.swift */; };
+		1149162F2A16A2AE004B1926 /* TaskListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149162E2A16A2AE004B1926 /* TaskListView.swift */; };
+		114916352A16A30A004B1926 /* NewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916342A16A30A004B1926 /* NewTaskView.swift */; };
+		114916382A16A332004B1926 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916372A16A332004B1926 /* ImagePicker.swift */; };
+		1149163B2A171C4C004B1926 /* TaskDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149163A2A171C4C004B1926 /* TaskDetailsView.swift */; };
+		1149163E2A171C68004B1926 /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149163D2A171C68004B1926 /* EditTaskView.swift */; };
+		114916412A171D36004B1926 /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916402A171D36004B1926 /* TasksView.swift */; };
+		114916442A171E8C004B1926 /* TaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916432A171E8C004B1926 /* TaskRow.swift */; };
+		1149166F2A174102004B1926 /* Binding+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149166E2A174102004B1926 /* Binding+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		114916152A16A245004B1926 /* Vizy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vizy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		114916182A16A245004B1926 /* VizyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VizyApp.swift; sourceTree = "<group>"; };
-		1149161A2A16A245004B1926 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		1149161C2A16A250004B1926 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1149161F2A16A250004B1926 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		114916212A16A250004B1926 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		114916282A16A26E004B1926 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		1149162B2A16A28A004B1926 /* TaskStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskStore.swift; sourceTree = "<group>"; };
+		1149162E2A16A2AE004B1926 /* TaskListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskListView.swift; sourceTree = "<group>"; };
+		114916342A16A30A004B1926 /* NewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewTaskView.swift; sourceTree = "<group>"; };
+		114916372A16A332004B1926 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
+		1149163A2A171C4C004B1926 /* TaskDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailsView.swift; sourceTree = "<group>"; };
+		1149163D2A171C68004B1926 /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
+		114916402A171D36004B1926 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
+		114916432A171E8C004B1926 /* TaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRow.swift; sourceTree = "<group>"; };
+		1149166E2A174102004B1926 /* Binding+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,10 +71,19 @@
 			isa = PBXGroup;
 			children = (
 				114916182A16A245004B1926 /* VizyApp.swift */,
-				1149161A2A16A245004B1926 /* ContentView.swift */,
 				1149161C2A16A250004B1926 /* Assets.xcassets */,
 				114916212A16A250004B1926 /* Info.plist */,
 				1149161E2A16A250004B1926 /* Preview Content */,
+				114916282A16A26E004B1926 /* Task.swift */,
+				1149162B2A16A28A004B1926 /* TaskStore.swift */,
+				1149162E2A16A2AE004B1926 /* TaskListView.swift */,
+				114916342A16A30A004B1926 /* NewTaskView.swift */,
+				114916372A16A332004B1926 /* ImagePicker.swift */,
+				1149163A2A171C4C004B1926 /* TaskDetailsView.swift */,
+				1149163D2A171C68004B1926 /* EditTaskView.swift */,
+				114916402A171D36004B1926 /* TasksView.swift */,
+				114916432A171E8C004B1926 /* TaskRow.swift */,
+				1149166E2A174102004B1926 /* Binding+Extensions.swift */,
 			);
 			path = Vizy;
 			sourceTree = "<group>";
@@ -138,8 +165,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1149161B2A16A245004B1926 /* ContentView.swift in Sources */,
+				114916352A16A30A004B1926 /* NewTaskView.swift in Sources */,
+				114916292A16A26E004B1926 /* Task.swift in Sources */,
+				114916442A171E8C004B1926 /* TaskRow.swift in Sources */,
+				114916412A171D36004B1926 /* TasksView.swift in Sources */,
+				1149162F2A16A2AE004B1926 /* TaskListView.swift in Sources */,
+				1149163B2A171C4C004B1926 /* TaskDetailsView.swift in Sources */,
+				1149166F2A174102004B1926 /* Binding+Extensions.swift in Sources */,
+				114916382A16A332004B1926 /* ImagePicker.swift in Sources */,
+				1149162C2A16A28A004B1926 /* TaskStore.swift in Sources */,
 				114916192A16A245004B1926 /* VizyApp.swift in Sources */,
+				1149163E2A171C68004B1926 /* EditTaskView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
