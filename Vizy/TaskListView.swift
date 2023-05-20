@@ -13,8 +13,8 @@ struct TaskListView: View {
     var body: some View {
         NavigationView {
             List {
-                ForEach(Array(taskStore.tasks.enumerated()), id: \.element.id) { index, task in
-                    NavigationLink(destination: TaskDetailsView(index: index).environmentObject(taskStore)) {
+                ForEach(taskStore.tasks, id: \.id) { task in
+                    NavigationLink(destination: TaskDetailsView(index: taskStore.tasks.firstIndex(where: { $0.id == task.id })!).environmentObject(taskStore)) {
                         TaskRow(task: task)
                     }
                 }

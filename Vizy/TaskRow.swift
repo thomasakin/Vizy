@@ -13,7 +13,7 @@ struct TaskRow: View {
 
     var body: some View {
         HStack {
-            Image(uiImage: task.photo)
+            Image(uiImage: task.photo.uiImage) // Use uiImage, not image
                 .resizable()
                 .scaledToFit()
                 .frame(width: 50, height: 50)

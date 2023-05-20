@@ -14,7 +14,6 @@ struct TaskDetailsView: View {
 
     var body: some View {
         let task = taskStore.tasks[index]
-
         VStack {
             if let image = task.photo {
                 Image(uiImage: image)
@@ -26,7 +25,7 @@ struct TaskDetailsView: View {
         }
         .padding()
         .navigationTitle("Task Details")
-        .navigationBarItems(trailing: NavigationLink(destination: EditTaskView(index: index).environmentObject(taskStore)) {
+        .navigationBarItems(trailing: NavigationLink(destination: EditTaskView(index: index, task: <#Task#>).environmentObject(taskStore)) {
             Text("Edit")
         })
     }

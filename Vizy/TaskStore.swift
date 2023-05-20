@@ -9,14 +9,12 @@ import UIKit
 
 class TaskStore: ObservableObject {
     @Published var tasks = [Task]()
-    
+
     func addTask(_ task: Task) {
         tasks.append(task)
     }
-
-    func updateTask(_ task: Task) {
-        if let index = tasks.firstIndex(where: { $0.id == task.id }) {
-            tasks[index] = task
-        }
+    
+    func updateTask(_ task: Task, at index: Int) {
+        tasks[index] = task
     }
 }

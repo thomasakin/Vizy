@@ -17,7 +17,6 @@
 		114916382A16A332004B1926 /* ImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916372A16A332004B1926 /* ImagePicker.swift */; };
 		1149163B2A171C4C004B1926 /* TaskDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149163A2A171C4C004B1926 /* TaskDetailsView.swift */; };
 		1149163E2A171C68004B1926 /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149163D2A171C68004B1926 /* EditTaskView.swift */; };
-		114916412A171D36004B1926 /* TasksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916402A171D36004B1926 /* TasksView.swift */; };
 		114916442A171E8C004B1926 /* TaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916432A171E8C004B1926 /* TaskRow.swift */; };
 		1149166F2A174102004B1926 /* Binding+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149166E2A174102004B1926 /* Binding+Extensions.swift */; };
 /* End PBXBuildFile section */
@@ -35,7 +34,6 @@
 		114916372A16A332004B1926 /* ImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagePicker.swift; sourceTree = "<group>"; };
 		1149163A2A171C4C004B1926 /* TaskDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailsView.swift; sourceTree = "<group>"; };
 		1149163D2A171C68004B1926 /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
-		114916402A171D36004B1926 /* TasksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TasksView.swift; sourceTree = "<group>"; };
 		114916432A171E8C004B1926 /* TaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRow.swift; sourceTree = "<group>"; };
 		1149166E2A174102004B1926 /* Binding+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,7 +79,6 @@
 				114916372A16A332004B1926 /* ImagePicker.swift */,
 				1149163A2A171C4C004B1926 /* TaskDetailsView.swift */,
 				1149163D2A171C68004B1926 /* EditTaskView.swift */,
-				114916402A171D36004B1926 /* TasksView.swift */,
 				114916432A171E8C004B1926 /* TaskRow.swift */,
 				1149166E2A174102004B1926 /* Binding+Extensions.swift */,
 			);
@@ -168,7 +165,6 @@
 				114916352A16A30A004B1926 /* NewTaskView.swift in Sources */,
 				114916292A16A26E004B1926 /* Task.swift in Sources */,
 				114916442A171E8C004B1926 /* TaskRow.swift in Sources */,
-				114916412A171D36004B1926 /* TasksView.swift in Sources */,
 				1149162F2A16A2AE004B1926 /* TaskListView.swift in Sources */,
 				1149163B2A171C4C004B1926 /* TaskDetailsView.swift in Sources */,
 				1149166F2A174102004B1926 /* Binding+Extensions.swift in Sources */,
