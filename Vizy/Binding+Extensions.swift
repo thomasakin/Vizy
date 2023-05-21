@@ -35,3 +35,9 @@ extension UIImage {
         return image
     }
 }
+
+extension Task {
+    var isOverdue: Bool {
+        return Date() > dueDate
+    }
+}
