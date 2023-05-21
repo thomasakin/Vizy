@@ -24,5 +24,6 @@ struct TaskListView: View {
                 Image(systemName: "plus")
             })
         }
+        .id(taskStore.tasks) // Add this line
     }
 }

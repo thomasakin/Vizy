@@ -15,17 +15,15 @@ struct TaskDetailsView: View {
     var body: some View {
         let task = taskStore.tasks[index]
         VStack {
-            if let image = task.photo {
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-            }
+            Image(uiImage: task.photo.uiImage) // Use the uiImage property of IdentifiableImage
+                .resizable()
+                .aspectRatio(contentMode: .fit)
             Text(task.dueDate, style: .date)
-            Text(task.notes ?? "")
+            Text(task.notes)
         }
         .padding()
         .navigationTitle("Task Details")
-        .navigationBarItems(trailing: NavigationLink(destination: EditTaskView(index: index, task: <#Task#>).environmentObject(taskStore)) {
+        .navigationBarItems(trailing: NavigationLink(destination: EditTaskView(index: index, task: taskStore.tasks[index]).environmentObject(taskStore)) {
             Text("Edit")
         })
     }

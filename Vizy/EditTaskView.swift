@@ -28,7 +28,7 @@ struct EditTaskView: View {
     var body: some View {
         VStack {
             if let identifiableImage = identifiableImage {
-                Image(uiImage: identifiableImage.image) // Use the image property of IdentifiableImage
+                Image(uiImage: identifiableImage.uiImage) // Use the uiImage property of IdentifiableImage
                     .resizable()
                     .scaledToFit()
                     .onTapGesture {
@@ -50,15 +50,15 @@ struct EditTaskView: View {
             TextField("Notes", text: $notes)
 
             Button("Save Task") {
-                let task = Task(photo: identifiableImage ?? taskStore.tasks[index].photo, dueDate: date, notes: notes)
+                let task = Task(photo: identifiableImage?.uiImage ?? taskStore.tasks[index].photo.uiImage, dueDate: date, notes: notes)
                 taskStore.tasks[index] = task
                 presentationMode.wrappedValue.dismiss()
             }
-            .disabled(identifiableImage == nil) // Changed this from uiImage to identifiableImage
+            .disabled(identifiableImage == nil)
         }
         .padding()
         .sheet(isPresented: $isShowingImagePicker) {
-            ImagePicker(selectedImage: self.$identifiableImage) // Changed this from uiImage to identifiableImage
+            ImagePicker(selectedImage: self.$identifiableImage)
         }
     }
 }

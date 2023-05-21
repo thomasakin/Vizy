@@ -14,7 +14,15 @@ struct IdentifiableImage: Identifiable {
     let uiImage: UIImage
 }
 
-class Task: Identifiable, ObservableObject {
+class Task: Identifiable, ObservableObject, Hashable {
+    static func == (lhs: Task, rhs: Task) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+    
     let id = UUID()
     @Published var photo: IdentifiableImage
     @Published var dueDate: Date
@@ -26,4 +34,3 @@ class Task: Identifiable, ObservableObject {
         self.notes = notes
     }
 }
-

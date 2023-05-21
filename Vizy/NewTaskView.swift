@@ -10,6 +10,8 @@ import SwiftUI
 struct NewTaskView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var taskStore: TaskStore
+    @State private var identifiableImage: IdentifiableImage? = nil
+
     
     @State private var date = Date()
     @State private var isShowingImagePicker = false
@@ -19,8 +21,8 @@ struct NewTaskView: View {
     var body: some View {
         VStack {
             VStack {
-                if let uiImage = uiImage {
-                    Image(uiImage: uiImage)
+                if let identifiableImage = identifiableImage {
+                    Image(uiImage: identifiableImage.uiImage)
                         .resizable()
                         .scaledToFit()
                         .frame(height: 300)
@@ -38,17 +40,17 @@ struct NewTaskView: View {
             TextEditor(text: $notes)
                 .border(Color.gray, width: 0.5)
             Button("Save Task") {
-                if let uiImage = uiImage {
+                if let uiImage = identifiableImage?.uiImage {
                     let task = Task(photo: uiImage, dueDate: date, notes: notes)
                     taskStore.addTask(task)
                     presentationMode.wrappedValue.dismiss()
                 }
             }
-            .disabled(uiImage == nil)
+            .disabled(identifiableImage == nil)
         }
         .padding()
         .sheet(isPresented: $isShowingImagePicker) {
-            ImagePicker(selectedImage: self.$uiImage)
+            ImagePicker(selectedImage: self.$identifiableImage)
         }
     }
 }
