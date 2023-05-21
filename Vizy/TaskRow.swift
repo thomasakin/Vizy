@@ -18,19 +18,22 @@ struct TaskRow: View {
         HStack {
             Image(uiImage: task.photo.uiImage)
                 .resizable()
-                .scaledToFit()
-                .frame(width: 50, height: 50)
+                .scaledToFill()
+                .frame(width: 70, height: 70)  // Updated frame size
                 .cornerRadius(10)
             VStack(alignment: .leading) {
-                Text(task.state.rawValue)
-                    .font(.system(size: 16, weight: .bold)) // Increase the font size and set the weight to bold
-                    .foregroundColor(statusColor(for: task.state)) // Set the color based on the state
-                    .onTapGesture {
-                        task.toggleState() // Toggle the state when tapped
-                    }
-                Text("\(task.dueDate, formatter: Self.dateFormatter)")
-                    .strikethrough(task.state == .done)
-                    .foregroundColor(dateColor(for: task))
+                HStack {
+                    Text(task.state.rawValue)
+                        .font(.system(size: 16, weight: .bold)) // Increase the font size and set the weight to bold
+                        .foregroundColor(statusColor(for: task.state)) // Set the color based on the state
+                        .onTapGesture {
+                            task.toggleState() // Toggle the state when tapped
+                        }
+                    Spacer()
+                    Text("\(task.dueDate, formatter: Self.dateFormatter)")
+                        .strikethrough(task.state == .done)
+                        .foregroundColor(dateColor(for: task)) // apply color here
+                }
                 Text(task.notes)
             }
         }
@@ -67,7 +70,6 @@ struct TaskRow: View {
         }
     }
 
-    
     // Define the color values
     private let paleGreenColor = UIColor(red: 0.30, green: 0.82, blue: 0.22, alpha: 1.00)
     private let softYellowColor = UIColor(red: 0.98, green: 0.77, blue: 0.19, alpha: 1.00)

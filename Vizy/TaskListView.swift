@@ -121,8 +121,8 @@ struct TaskListPageView: View {
         List(filteredTasks, id: \.id) { task in
             NavigationLink(destination: TaskDetailsView(task: task)) {
                 TaskRow(task: task)
-                    .foregroundColor(rowColor(for: task))
             }
+
         }
         .listStyle(InsetGroupedListStyle())
     }
