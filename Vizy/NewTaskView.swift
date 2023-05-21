@@ -11,7 +11,7 @@ struct NewTaskView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var taskStore: TaskStore
     @State private var identifiableImage: IdentifiableImage? = nil
-
+    @State private var state: TaskState = .new // Add state property
     
     @State private var date = Date()
     @State private var isShowingImagePicker = false
@@ -36,12 +36,17 @@ struct NewTaskView: View {
             .onTapGesture {
                 isShowingImagePicker = true
             }
+            Picker("State", selection: $state) {
+                ForEach(TaskState.allCases, id: \.self) {
+                    Text($0.rawValue)
+                }
+            }
             DatePicker("Due Date", selection: $date, displayedComponents: .date)
             TextEditor(text: $notes)
                 .border(Color.gray, width: 0.5)
             Button("Save Task") {
                 if let uiImage = identifiableImage?.uiImage {
-                    let task = Task(photo: uiImage, dueDate: date, notes: notes)
+                    let task = Task(photo: uiImage, dueDate: date, notes: notes, state: state) // Include the selected state
                     taskStore.addTask(task)
                     presentationMode.wrappedValue.dismiss()
                 }

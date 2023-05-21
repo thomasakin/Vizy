@@ -14,6 +14,24 @@ struct IdentifiableImage: Identifiable {
     let uiImage: UIImage
 }
 
+// Update the TaskState enum
+enum TaskState: String, CaseIterable {
+    case new = "New"
+    case doing = "Doing"
+    case done = "Done"
+
+    mutating func toggle() {
+        switch self {
+        case .new:
+            self = .doing
+        case .doing:
+            self = .done
+        case .done:
+            self = .new
+        }
+    }
+}
+
 class Task: Identifiable, ObservableObject, Hashable {
     static func == (lhs: Task, rhs: Task) -> Bool {
         return lhs.id == rhs.id
@@ -27,10 +45,17 @@ class Task: Identifiable, ObservableObject, Hashable {
     @Published var photo: IdentifiableImage
     @Published var dueDate: Date
     @Published var notes: String
+    @Published var state: TaskState
 
-    init(photo: UIImage, dueDate: Date, notes: String) {
+    init(photo: UIImage, dueDate: Date, notes: String, state: TaskState = .new) {
         self.photo = IdentifiableImage(uiImage: photo)
         self.dueDate = dueDate
         self.notes = notes
+        self.state = state
+    }
+    
+    // Toggle the task state
+    func toggleState() {
+        state.toggle()
     }
 }

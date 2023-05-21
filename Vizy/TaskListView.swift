@@ -14,8 +14,13 @@ struct TaskListView: View {
         NavigationView {
             List {
                 ForEach(taskStore.tasks, id: \.id) { task in
-                    NavigationLink(destination: TaskDetailsView(index: taskStore.tasks.firstIndex(where: { $0.id == task.id })!).environmentObject(taskStore)) {
+                    NavigationLink(destination: TaskDetailsView(task: task).environmentObject(taskStore)) {
                         TaskRow(task: task)
+                    }
+                }
+                .onDelete { indexSet in
+                    for index in indexSet {
+                        taskStore.deleteTask(at: index)
                     }
                 }
             }
@@ -24,6 +29,5 @@ struct TaskListView: View {
                 Image(systemName: "plus")
             })
         }
-        .id(taskStore.tasks) // Add this line
     }
 }
