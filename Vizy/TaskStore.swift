@@ -17,4 +17,8 @@ class TaskStore: ObservableObject {
     func updateTask(_ task: Task, at index: Int) {
         tasks[index] = task
     }
+    
+    func deleteTask(at index: Int) {
+        tasks.remove(at: index)
+    }
 }

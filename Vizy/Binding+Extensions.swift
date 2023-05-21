@@ -18,3 +18,20 @@ extension Binding where Value: MutableCollection, Value.Index == Int {
         })
     }
 }
+
+//Default Image for Initialization
+extension UIImage {
+    static var defaultImage: UIImage {
+        let size = CGSize(width: 1, height: 1)
+        UIGraphicsBeginImageContext(size)
+        let context = UIGraphicsGetCurrentContext()!
+
+        context.setFillColor(UIColor.gray.cgColor)
+        context.fill(CGRect(origin: .zero, size: size))
+
+        let image = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+
+        return image
+    }
+}

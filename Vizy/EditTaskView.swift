@@ -11,24 +11,26 @@ import UIKit
 
 struct EditTaskView: View {
     @Environment(\.presentationMode) var presentationMode
-    var index: Int
-    @EnvironmentObject var taskStore: TaskStore
+    @ObservedObject var task: Task
+
     @State private var isShowingImagePicker = false
-    @State private var identifiableImage: IdentifiableImage? // Changed this from UIImage to IdentifiableImage
+    @State private var identifiableImage: IdentifiableImage?
     @State private var notes: String
     @State private var date: Date
+    @State private var state: TaskState
 
-    init(index: Int, task: Task) {
-        self.index = index
-        self._identifiableImage = State(initialValue: task.photo) // Changed this from uiImage to identifiableImage
+    init(task: Task) {
+        self.task = task
+        self._identifiableImage = State(initialValue: task.photo)
         self._notes = State(initialValue: task.notes)
         self._date = State(initialValue: task.dueDate)
+        self._state = State(initialValue: task.state)
     }
 
     var body: some View {
         VStack {
             if let identifiableImage = identifiableImage {
-                Image(uiImage: identifiableImage.image) // Use the image property of IdentifiableImage
+                Image(uiImage: identifiableImage.uiImage)
                     .resizable()
                     .scaledToFit()
                     .onTapGesture {
@@ -43,6 +45,12 @@ struct EditTaskView: View {
                         self.isShowingImagePicker = true
                     }
             }
+            
+            Picker("State", selection: $state) {
+                ForEach(TaskState.allCases, id: \.self) {
+                    Text($0.rawValue)
+                }
+            }
 
             DatePicker("Due Date", selection: $date, displayedComponents: .date)
                 .datePickerStyle(GraphicalDatePickerStyle())
@@ -50,15 +58,17 @@ struct EditTaskView: View {
             TextField("Notes", text: $notes)
 
             Button("Save Task") {
-                let task = Task(photo: identifiableImage ?? taskStore.tasks[index].photo, dueDate: date, notes: notes)
-                taskStore.tasks[index] = task
+                task.photo = identifiableImage ?? task.photo
+                task.dueDate = date
+                task.notes = notes
+                task.state = state
                 presentationMode.wrappedValue.dismiss()
             }
-            .disabled(identifiableImage == nil) // Changed this from uiImage to identifiableImage
+            .disabled(identifiableImage == nil)
         }
         .padding()
         .sheet(isPresented: $isShowingImagePicker) {
-            ImagePicker(selectedImage: self.$identifiableImage) // Changed this from uiImage to identifiableImage
+            ImagePicker(selectedImage: self.$identifiableImage)
         }
     }
 }

@@ -10,6 +10,9 @@ import SwiftUI
 struct NewTaskView: View {
     @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var taskStore: TaskStore
+    @State private var identifiableImage: IdentifiableImage? = IdentifiableImage(uiImage: UIImage.defaultImage)
+    @State private var state: TaskState = .new // Add state property
+    
     
     @State private var date = Date()
     @State private var isShowingImagePicker = false
@@ -19,8 +22,8 @@ struct NewTaskView: View {
     var body: some View {
         VStack {
             VStack {
-                if let uiImage = uiImage {
-                    Image(uiImage: uiImage)
+                if let identifiableImage = identifiableImage {
+                    Image(uiImage: identifiableImage.uiImage)
                         .resizable()
                         .scaledToFit()
                         .frame(height: 300)
@@ -34,21 +37,25 @@ struct NewTaskView: View {
             .onTapGesture {
                 isShowingImagePicker = true
             }
+            Picker("State", selection: $state) {
+                ForEach(TaskState.allCases, id: \.self) {
+                    Text($0.rawValue)
+                }
+            }
             DatePicker("Due Date", selection: $date, displayedComponents: .date)
             TextEditor(text: $notes)
                 .border(Color.gray, width: 0.5)
             Button("Save Task") {
-                if let uiImage = uiImage {
-                    let task = Task(photo: uiImage, dueDate: date, notes: notes)
-                    taskStore.addTask(task)
-                    presentationMode.wrappedValue.dismiss()
-                }
+                let uiImage = identifiableImage?.uiImage ?? UIImage.defaultImage
+                let task = Task(photo: uiImage, dueDate: date, notes: notes, state: state)
+                taskStore.addTask(task)
+                presentationMode.wrappedValue.dismiss()
             }
-            .disabled(uiImage == nil)
+            .disabled(false)
         }
         .padding()
         .sheet(isPresented: $isShowingImagePicker) {
-            ImagePicker(selectedImage: self.$uiImage)
+            ImagePicker(selectedImage: self.$identifiableImage)
         }
     }
 }
