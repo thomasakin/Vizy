@@ -10,7 +10,10 @@ import SwiftUI
 
 struct TaskRow: View {
     @ObservedObject var task: Task
-
+    
+    private let doneTaskColor = UIColor(red: 220/255, green: 221/255, blue: 225/255, alpha: 1.00) // #dcdde1
+    private let pastDueDateColor = UIColor(red: 194/255, green: 54/255, blue: 22/255, alpha: 1.00) // #c23616
+    
     var body: some View {
         HStack {
             Image(uiImage: task.photo.uiImage)
@@ -26,6 +29,8 @@ struct TaskRow: View {
                         task.toggleState() // Toggle the state when tapped
                     }
                 Text("\(task.dueDate, formatter: Self.dateFormatter)")
+                    .strikethrough(task.state == .done)
+                    .foregroundColor(dateColor(for: task))
                 Text(task.notes)
             }
         }
@@ -49,8 +54,22 @@ struct TaskRow: View {
         }
     }
     
+    // Helper function to get the color for the date based on the task's state and due date
+    private func dateColor(for task: Task) -> Color {
+        if task.state == .done {
+            return Color(doneTaskColor)
+        } else if Calendar.current.isDateInToday(task.dueDate) {
+            return Color(UIColor(red: 0/255, green: 168/255, blue: 255/255, alpha: 1.00)) // #00a8ff
+        } else if task.dueDate < Date() {
+            return Color(pastDueDateColor)
+        } else {
+            return Color.primary
+        }
+    }
+
+    
     // Define the color values
-    private let paleGreenColor = UIColor(red: 0.725, green: 0.894, blue: 0.737, alpha: 1.0)
-    private let softYellowColor = UIColor(red: 0.953, green: 0.925, blue: 0.682, alpha: 1.0)
-    private let paleLavenderColor = UIColor(red: 0.839, green: 0.796, blue: 0.925, alpha: 1.0)
+    private let paleGreenColor = UIColor(red: 0.30, green: 0.82, blue: 0.22, alpha: 1.00)
+    private let softYellowColor = UIColor(red: 0.98, green: 0.77, blue: 0.19, alpha: 1.00)
+    private let paleLavenderColor = UIColor(red: 0.61, green: 0.53, blue: 1.00, alpha: 1.00)
 }

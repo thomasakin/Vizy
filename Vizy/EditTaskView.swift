@@ -14,14 +14,14 @@ struct EditTaskView: View {
     @ObservedObject var task: Task
 
     @State private var isShowingImagePicker = false
-    @State private var identifiableImage: IdentifiableImage? // Changed this from UIImage to IdentifiableImage
+    @State private var identifiableImage: IdentifiableImage?
     @State private var notes: String
     @State private var date: Date
-    @State private var state: TaskState // Add state property
+    @State private var state: TaskState
 
     init(task: Task) {
         self.task = task
-        self._identifiableImage = State(initialValue: task.photo) // Changed this from uiImage to identifiableImage
+        self._identifiableImage = State(initialValue: task.photo)
         self._notes = State(initialValue: task.notes)
         self._date = State(initialValue: task.dueDate)
         self._state = State(initialValue: task.state)
@@ -30,7 +30,7 @@ struct EditTaskView: View {
     var body: some View {
         VStack {
             if let identifiableImage = identifiableImage {
-                Image(uiImage: identifiableImage.uiImage) // Use the uiImage property of IdentifiableImage
+                Image(uiImage: identifiableImage.uiImage)
                     .resizable()
                     .scaledToFit()
                     .onTapGesture {
@@ -58,7 +58,10 @@ struct EditTaskView: View {
             TextField("Notes", text: $notes)
 
             Button("Save Task") {
-                task.state = state // Save the selected state
+                task.photo = identifiableImage ?? task.photo
+                task.dueDate = date
+                task.notes = notes
+                task.state = state
                 presentationMode.wrappedValue.dismiss()
             }
             .disabled(identifiableImage == nil)

@@ -15,10 +15,22 @@ struct IdentifiableImage: Identifiable {
 }
 
 // Update the TaskState enum
-enum TaskState: String, CaseIterable {
+enum TaskState: String, CaseIterable, Comparable {
     case new = "New"
     case doing = "Doing"
     case done = "Done"
+
+    var order: Int {
+        switch self {
+        case .new: return 0
+        case .doing: return 1
+        case .done: return 2
+        }
+    }
+
+    static func < (lhs: TaskState, rhs: TaskState) -> Bool {
+        return lhs.order < rhs.order
+    }
 
     mutating func toggle() {
         switch self {
