@@ -11,20 +11,19 @@ import UIKit
 
 struct EditTaskView: View {
     @Environment(\.presentationMode) var presentationMode
-    @ObservedObject var task: Task
+    @Environment(\.managedObjectContext) private var viewContext
+    @ObservedObject var task: CoreDataTask
 
     @State private var isShowingImagePicker = false
     @State private var identifiableImage: IdentifiableImage?
-    @State private var notes: String
-    @State private var date: Date
-    @State private var state: TaskState
 
-    init(task: Task) {
+    init(task: CoreDataTask) {
         self.task = task
-        self._identifiableImage = State(initialValue: task.photo)
-        self._notes = State(initialValue: task.notes)
-        self._date = State(initialValue: task.dueDate)
-        self._state = State(initialValue: task.state)
+        if let data = task.photoData, let uiImage = UIImage(data: data) {
+            self._identifiableImage = State(initialValue: IdentifiableImage(uiImage: uiImage))
+        } else {
+            self._identifiableImage = State(initialValue: nil)
+        }
     }
 
     var body: some View {
@@ -45,30 +44,51 @@ struct EditTaskView: View {
                         self.isShowingImagePicker = true
                     }
             }
-            
-            Picker("State", selection: $state) {
+
+            Picker("State", selection: Binding(
+                get: { TaskState(rawValue: self.task.stateRaw ?? "") ?? .new },
+                set: { newValue in self.task.stateRaw = newValue.rawValue }
+            )) {
                 ForEach(TaskState.allCases, id: \.self) {
                     Text($0.rawValue)
                 }
             }
 
-            DatePicker("Due Date", selection: $date, displayedComponents: .date)
+            DatePicker("Due Date",
+                       selection: Binding(
+                            get: { self.task.dueDate ?? Date() },
+                            set: { self.task.dueDate = $0 }
+                        ),
+                       displayedComponents: .date)
                 .datePickerStyle(GraphicalDatePickerStyle())
 
-            TextField("Notes", text: $notes)
+            TextField("Notes", text: Binding(
+                get: { self.task.note ?? "" },
+                set: { self.task.note = $0 }
+            ))
 
             Button("Save Task") {
-                task.photo = identifiableImage ?? task.photo
-                task.dueDate = date
-                task.notes = notes
-                task.state = state
+                if let identifiableImage = identifiableImage {
+                    if let imageData = identifiableImage.uiImage.jpegData(compressionQuality: 1.0) {
+                        task.photoData = imageData
+                    }
+                }
+                saveContext()
                 presentationMode.wrappedValue.dismiss()
             }
-            .disabled(identifiableImage == nil)
         }
         .padding()
         .sheet(isPresented: $isShowingImagePicker) {
             ImagePicker(selectedImage: self.$identifiableImage)
+        }
+    }
+
+    private func saveContext() {
+        do {
+            try viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
 }

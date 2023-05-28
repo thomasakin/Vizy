@@ -18,7 +18,8 @@
 		1149163B2A171C4C004B1926 /* TaskDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149163A2A171C4C004B1926 /* TaskDetailsView.swift */; };
 		1149163E2A171C68004B1926 /* EditTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149163D2A171C68004B1926 /* EditTaskView.swift */; };
 		114916442A171E8C004B1926 /* TaskRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916432A171E8C004B1926 /* TaskRow.swift */; };
-		1149166F2A174102004B1926 /* Binding+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1149166E2A174102004B1926 /* Binding+Extensions.swift */; };
+		11DC1D3F2A224E260086367C /* Vizy.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 11DC1D3D2A224E260086367C /* Vizy.xcdatamodeld */; };
+		11DC1D442A22EFAA0086367C /* Bindings+Extenstions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11DC1D432A22EFAA0086367C /* Bindings+Extenstions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,7 +36,9 @@
 		1149163A2A171C4C004B1926 /* TaskDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskDetailsView.swift; sourceTree = "<group>"; };
 		1149163D2A171C68004B1926 /* EditTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTaskView.swift; sourceTree = "<group>"; };
 		114916432A171E8C004B1926 /* TaskRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskRow.swift; sourceTree = "<group>"; };
-		1149166E2A174102004B1926 /* Binding+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Binding+Extensions.swift"; sourceTree = "<group>"; };
+		11DC1D3E2A224E260086367C /* CoreDataModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataModel.xcdatamodel; sourceTree = "<group>"; };
+		11DC1D402A224FDD0086367C /* Vizy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Vizy.entitlements; sourceTree = "<group>"; };
+		11DC1D432A22EFAA0086367C /* Bindings+Extenstions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bindings+Extenstions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,19 +71,21 @@
 		114916172A16A245004B1926 /* Vizy */ = {
 			isa = PBXGroup;
 			children = (
+				11DC1D402A224FDD0086367C /* Vizy.entitlements */,
 				114916182A16A245004B1926 /* VizyApp.swift */,
 				1149161C2A16A250004B1926 /* Assets.xcassets */,
 				114916212A16A250004B1926 /* Info.plist */,
 				1149161E2A16A250004B1926 /* Preview Content */,
 				114916282A16A26E004B1926 /* Task.swift */,
 				1149162B2A16A28A004B1926 /* TaskStore.swift */,
+				114916432A171E8C004B1926 /* TaskRow.swift */,
 				1149162E2A16A2AE004B1926 /* TaskListView.swift */,
 				114916342A16A30A004B1926 /* NewTaskView.swift */,
-				114916372A16A332004B1926 /* ImagePicker.swift */,
 				1149163A2A171C4C004B1926 /* TaskDetailsView.swift */,
 				1149163D2A171C68004B1926 /* EditTaskView.swift */,
-				114916432A171E8C004B1926 /* TaskRow.swift */,
-				1149166E2A174102004B1926 /* Binding+Extensions.swift */,
+				114916372A16A332004B1926 /* ImagePicker.swift */,
+				11DC1D3D2A224E260086367C /* Vizy.xcdatamodeld */,
+				11DC1D432A22EFAA0086367C /* Bindings+Extenstions.swift */,
 			);
 			path = Vizy;
 			sourceTree = "<group>";
@@ -164,14 +169,15 @@
 			files = (
 				114916352A16A30A004B1926 /* NewTaskView.swift in Sources */,
 				114916292A16A26E004B1926 /* Task.swift in Sources */,
+				11DC1D3F2A224E260086367C /* Vizy.xcdatamodeld in Sources */,
 				114916442A171E8C004B1926 /* TaskRow.swift in Sources */,
 				1149162F2A16A2AE004B1926 /* TaskListView.swift in Sources */,
 				1149163B2A171C4C004B1926 /* TaskDetailsView.swift in Sources */,
-				1149166F2A174102004B1926 /* Binding+Extensions.swift in Sources */,
 				114916382A16A332004B1926 /* ImagePicker.swift in Sources */,
 				1149162C2A16A28A004B1926 /* TaskStore.swift in Sources */,
 				114916192A16A245004B1926 /* VizyApp.swift in Sources */,
 				1149163E2A171C68004B1926 /* EditTaskView.swift in Sources */,
+				11DC1D442A22EFAA0086367C /* Bindings+Extenstions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -299,6 +305,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Vizy/Vizy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Vizy/Preview Content\"";
 				DEVELOPMENT_TEAM = W3B9ZVZD69;
@@ -321,6 +328,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Vizy/Vizy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Vizy/Preview Content\"";
 				DEVELOPMENT_TEAM = W3B9ZVZD69;
@@ -360,6 +368,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		11DC1D3D2A224E260086367C /* Vizy.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				11DC1D3E2A224E260086367C /* CoreDataModel.xcdatamodel */,
+			);
+			currentVersion = 11DC1D3E2A224E260086367C /* CoreDataModel.xcdatamodel */;
+			path = Vizy.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 1149160D2A16A245004B1926 /* Project object */;
 }

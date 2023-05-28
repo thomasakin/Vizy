@@ -8,18 +8,19 @@
 import Foundation
 import SwiftUI
 import UIKit
+import CoreData
 
+// Keep IdentifiableImage if it is used elsewhere in your app
 struct IdentifiableImage: Identifiable {
     let id = UUID()
     let uiImage: UIImage
 }
 
-// Update the TaskState enum
 enum TaskState: String, CaseIterable, Comparable {
     case new = "New"
     case doing = "Doing"
     case done = "Done"
-
+    
     var order: Int {
         switch self {
         case .new: return 0
@@ -27,11 +28,11 @@ enum TaskState: String, CaseIterable, Comparable {
         case .done: return 2
         }
     }
-
+    
     static func < (lhs: TaskState, rhs: TaskState) -> Bool {
         return lhs.order < rhs.order
     }
-
+    
     mutating func toggle() {
         switch self {
         case .new:
@@ -44,30 +45,37 @@ enum TaskState: String, CaseIterable, Comparable {
     }
 }
 
-class Task: Identifiable, ObservableObject, Hashable {
-    static func == (lhs: Task, rhs: Task) -> Bool {
-        return lhs.id == rhs.id
-    }
+// Update Task class to inherit from NSManagedObject and rename to CoreDataTask
+//public class CoreDataTask: NSManagedObject, Identifiable {
+//    @NSManaged public var id: UUID
+//    @NSManaged public var photoData: Data
+//    @NSManaged public var dueDate: Date
+//    @NSManaged public var notes: String
+//    @NSManaged public var stateRaw: String
+//
+    // Convert Data to IdentifiableImage
+//    var photo: IdentifiableImage {
+//        get {
+//            let image = UIImage(data: photoData) ?? UIImage()
+//            return IdentifiableImage(uiImage: image)
+//        }
+//        set {
+//            photoData = newValue.uiImage.pngData()!
+//        }
+//    }
     
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
-    }
-    
-    let id = UUID()
-    @Published var photo: IdentifiableImage
-    @Published var dueDate: Date
-    @Published var notes: String
-    @Published var state: TaskState
-
-    init(photo: UIImage, dueDate: Date, notes: String, state: TaskState = .new) {
-        self.photo = IdentifiableImage(uiImage: photo)
-        self.dueDate = dueDate
-        self.notes = notes
-        self.state = state
-    }
+    // Convert String to TaskState
+//    var state: TaskState {
+//        get {
+//            return TaskState(rawValue: stateRaw) ?? .new
+//        }
+//        set {
+//            stateRaw = newValue.rawValue
+//        }
+//    }
     
     // Toggle the task state
-    func toggleState() {
-        state.toggle()
-    }
-}
+//    @objc func toggleState() {
+//        state.toggle()
+//    }
+//}

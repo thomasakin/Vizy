@@ -6,20 +6,74 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct TaskListView: View {
-    @EnvironmentObject var taskStore: TaskStore
+    @Environment(\.managedObjectContext) var managedObjectContext
+    @FetchRequest(
+        entity: CoreDataTask.entity(),
+        sortDescriptors: [NSSortDescriptor(keyPath: \CoreDataTask.dueDate, ascending: true)]
+    ) var tasks: FetchedResults<CoreDataTask>
     
-    @State private var selectedPageIndex = 0
+    @State private var selectedPageIndex = 1
     @State private var searchText = ""
     
-    private let pageTitles = ["All Tasks", "New Tasks", "Doing Tasks", "Done Tasks"]
+    private let pageTitles = ["All", "New", "Doing", "Done"]
 
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .short
         return formatter
     }()
+    
+    var filteredTasks: [CoreDataTask] {
+        let lowercaseSearchText = searchText.lowercased()
+        switch selectedPageIndex {
+        case 0:
+            if lowercaseSearchText.isEmpty {
+                return sortTasks(tasks.map { $0 })
+            } else {
+                return sortTasks(tasks.map { $0 }).filter { task in
+                    let formattedDueDate = task.dueDate != nil ? TaskListView.dateFormatter.string(from: task.dueDate!) : ""
+                    let lowercaseNote = task.note?.lowercased() ?? ""
+                    
+                    return lowercaseNote.contains(lowercaseSearchText) || formattedDueDate.contains(lowercaseSearchText)
+                }
+            }
+        case 1:
+            if lowercaseSearchText.isEmpty {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "new" })
+            } else {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "new" }).filter { task in
+                    let lowercaseNote = task.note?.lowercased() ?? ""
+                    
+                    return lowercaseNote.contains(lowercaseSearchText)
+                }
+            }
+        case 2:
+            if lowercaseSearchText.isEmpty {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "doing" })
+            } else {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "doing" }).filter { task in
+                    let lowercaseNote = task.note?.lowercased() ?? ""
+                    
+                    return lowercaseNote.contains(lowercaseSearchText)
+                }
+            }
+        case 3:
+            if lowercaseSearchText.isEmpty {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "done" })
+            } else {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "done" }).filter { task in
+                    let lowercaseNote = task.note?.lowercased() ?? ""
+                    
+                    return lowercaseNote.contains(lowercaseSearchText)
+                }
+            }
+        default:
+            return []
+        }
+    }
     
     var body: some View {
         NavigationView {
@@ -49,11 +103,16 @@ struct TaskListView: View {
                 
                 TabView(selection: $selectedPageIndex) {
                     ForEach(0..<pageTitles.count, id: \.self) { index in
-                        TaskListPageView(title: pageTitles[index], tasks: taskStore.tasks, searchText: $searchText, pageIndex: index, filterTasks: filteredTasks)
+                        TaskListPageView(
+                            title: pageTitles[index],
+                            tasks: tasks,
+                            searchText: $searchText,
+                            pageIndex: index,
+                            viewContext: managedObjectContext // Pass the viewContext
+                        )
                     }
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
-
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(pageTitles[selectedPageIndex])
@@ -62,84 +121,91 @@ struct TaskListView: View {
             })
         }
     }
-    
-    func filteredTasks(for pageIndex: Int, searchText: String, tasks: [Task]) -> [Task] {
-        var tasks = [Task]()
+}
 
-        switch pageIndex {
-        case 0:
-            tasks = self.taskStore.tasks
-        case 1:
-            tasks = self.taskStore.tasks.filter { $0.state == .new }
-        case 2:
-            tasks = self.taskStore.tasks.filter { $0.state == .doing }
-        case 3:
-            tasks = self.taskStore.tasks.filter { $0.state == .done }
-        default:
-            tasks = []
-        }
-
-        if !searchText.isEmpty {
-            let lowercasedSearchText = searchText.lowercased()
-            tasks = tasks.filter { task in
-                let formattedDueDate = Self.dateFormatter.string(from: task.dueDate).lowercased()
-                return task.notes.lowercased().contains(lowercasedSearchText)
-                    || formattedDueDate.contains(lowercasedSearchText)
-            }
-        }
-
-        return sortTasks(tasks)
-    }
-
-    private func sortTasks(_ tasks: [Task]) -> [Task] {
-        return tasks.sorted { (task1, task2) -> Bool in
-            if task1.state == task2.state {
-                return task1.dueDate < task2.dueDate
-            } else {
-                return task1.state < task2.state
-            }
-        }
+private func sortTasks(_ tasks: [CoreDataTask]) -> [CoreDataTask] {
+    return tasks.sorted { (task1, task2) -> Bool in
+        guard let dueDate1 = task1.dueDate else { return false }
+        guard let dueDate2 = task2.dueDate else { return true }
+        return dueDate1 < dueDate2
     }
 }
 
 struct TaskListPageView: View {
     let title: String
-    let tasks: [Task]
+    let tasks: FetchedResults<CoreDataTask>
     @Binding var searchText: String
     let pageIndex: Int
-    let filterTasks: (Int, String, [Task]) -> [Task]
+    let viewContext: NSManagedObjectContext // Added viewContext
     
-    private let doneTaskColor = UIColor(red: 220/255, green: 221/255, blue: 225/255, alpha: 1.00) // #dcdde1
-    
-    @EnvironmentObject var taskStore: TaskStore // add this line
-    
-    var filteredTasks: [Task] {
-        return filterTasks(pageIndex, searchText, tasks)
+    var filteredTasks: [CoreDataTask] {
+        let lowercaseSearchText = searchText.lowercased()
+        switch pageIndex {
+        case 0:
+            if lowercaseSearchText.isEmpty {
+                return sortTasks(tasks.map { $0 })
+            } else {
+                return sortTasks(tasks.map { $0 }).filter { task in
+                    let formattedDueDate = task.dueDate != nil ? TaskListView.dateFormatter.string(from: task.dueDate!) : ""
+                    let lowercaseNote = task.note?.lowercased() ?? ""
+                    
+                    return lowercaseNote.contains(lowercaseSearchText) || formattedDueDate.contains(lowercaseSearchText)
+                }
+            }
+        case 1:
+            if lowercaseSearchText.isEmpty {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "new" })
+            } else {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "new" }).filter { task in
+                    let lowercaseNote = task.note?.lowercased() ?? ""
+                    
+                    return lowercaseNote.contains(lowercaseSearchText)
+                }
+            }
+        case 2:
+            if lowercaseSearchText.isEmpty {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "doing" })
+            } else {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "doing" }).filter { task in
+                    let lowercaseNote = task.note?.lowercased() ?? ""
+                    
+                    return lowercaseNote.contains(lowercaseSearchText)
+                }
+            }
+        case 3:
+            if lowercaseSearchText.isEmpty {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "done" })
+            } else {
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "done" }).filter { task in
+                    let lowercaseNote = task.note?.lowercased() ?? ""
+                    
+                    return lowercaseNote.contains(lowercaseSearchText)
+                }
+            }
+        default:
+            return []
+        }
     }
-
+    
     var body: some View {
         List(filteredTasks, id: \.id) { task in
-            NavigationLink(destination: TaskDetailsView(task: task)) {
+            NavigationLink(destination: TaskDetailsView(task: task).environment(\.managedObjectContext, viewContext)) {
                 TaskRow(task: task)
+                    .onTapGesture {
+                        task.toggleState()
+                        saveContext()
+                    }
             }
-
         }
         .listStyle(InsetGroupedListStyle())
     }
     
-    private func rowColor(for task: Task) -> Color {
-        if task.state == .done {
-            if task.isOverdue {
-                return .red
-            } else {
-                return Color(doneTaskColor)
-            }
-        } else {
-            if task.isOverdue {
-                return .red
-            } else {
-                return .black
-            }
+    private func saveContext() {
+        do {
+            try viewContext.save()
+        } catch {
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
 }

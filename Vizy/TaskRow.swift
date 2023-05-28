@@ -9,34 +9,33 @@ import Foundation
 import SwiftUI
 
 struct TaskRow: View {
-    @ObservedObject var task: Task
+    var task: CoreDataTask
     
     private let doneTaskColor = UIColor(red: 220/255, green: 221/255, blue: 225/255, alpha: 1.00) // #dcdde1
     private let pastDueDateColor = UIColor(red: 194/255, green: 54/255, blue: 22/255, alpha: 1.00) // #c23616
     
     var body: some View {
         HStack {
-            Image(uiImage: task.photo.uiImage)
+            Image(uiImage: UIImage(data: task.photoData ?? Data()) ?? UIImage(named: "placeholder")!)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 70, height: 70)  // Updated frame size
                 .cornerRadius(10)
             VStack(alignment: .leading) {
                 HStack {
-                    Text(task.state.rawValue)
+                    Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
                         .font(.system(size: 16, weight: .bold)) // Increase the font size and set the weight to bold
-                        .foregroundColor(statusColor(for: task.state)) // Set the color based on the state
-                        .onTapGesture {
-                            task.toggleState() // Toggle the state when tapped
-                        }
+                        .foregroundColor(statusColor(for: TaskState(rawValue: task.stateRaw ?? "") ?? .new)) // Set the color based on the state
                     Spacer()
-                    Text("\(task.dueDate, formatter: Self.dateFormatter)")
-                        .strikethrough(task.state == .done)
-                        .foregroundColor(dateColor(for: task)) // apply color here
+                    if let dueDate = task.dueDate {
+                        Text("\(dueDate, formatter: Self.dateFormatter)")
+                            .strikethrough(TaskState(rawValue: task.stateRaw ?? "") == .done)
+                            .foregroundColor(dateColor(for: task)) // apply color here
+                    }
                 }
-                Text(task.notes)
+                Text(task.note ?? "")
             }
-        }
+        }//.padding()
     }
 
     static let dateFormatter: DateFormatter = {
@@ -58,12 +57,12 @@ struct TaskRow: View {
     }
     
     // Helper function to get the color for the date based on the task's state and due date
-    private func dateColor(for task: Task) -> Color {
-        if task.state == .done {
+    private func dateColor(for task: CoreDataTask) -> Color {
+        if TaskState(rawValue: task.stateRaw ?? "") == .done {
             return Color(doneTaskColor)
-        } else if Calendar.current.isDateInToday(task.dueDate) {
+        } else if let dueDate = task.dueDate, Calendar.current.isDateInToday(dueDate) {
             return Color(UIColor(red: 0/255, green: 168/255, blue: 255/255, alpha: 1.00)) // #00a8ff
-        } else if task.dueDate < Date() {
+        } else if let dueDate = task.dueDate, dueDate < Date() {
             return Color(pastDueDateColor)
         } else {
             return Color.primary

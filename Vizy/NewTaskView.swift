@@ -6,17 +6,15 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct NewTaskView: View {
     @Environment(\.presentationMode) var presentationMode
-    @EnvironmentObject var taskStore: TaskStore
+    @Environment(\.managedObjectContext) private var viewContext
     @State private var identifiableImage: IdentifiableImage? = IdentifiableImage(uiImage: UIImage.defaultImage)
-    @State private var state: TaskState = .new // Add state property
-    
-    
+    @State private var state: TaskState = .new
     @State private var date = Date()
     @State private var isShowingImagePicker = false
-    @State private var uiImage: UIImage? = nil
     @State private var notes = ""
 
     var body: some View {
@@ -42,13 +40,32 @@ struct NewTaskView: View {
                     Text($0.rawValue)
                 }
             }
+            .pickerStyle(MenuPickerStyle())
             DatePicker("Due Date", selection: $date, displayedComponents: .date)
             TextEditor(text: $notes)
                 .border(Color.gray, width: 0.5)
             Button("Save Task") {
                 let uiImage = identifiableImage?.uiImage ?? UIImage.defaultImage
-                let task = Task(photo: uiImage, dueDate: date, notes: notes, state: state)
-                taskStore.addTask(task)
+                let newTask = CoreDataTask(context: viewContext)
+                newTask.id = UUID()
+                
+                // Convert IdentifiableImage to Data
+                if let imageData = identifiableImage?.uiImage.jpegData(compressionQuality: 1.0) {
+                    newTask.photoData = imageData
+                } else if let defaultImageData = UIImage.defaultImage.jpegData(compressionQuality: 1.0) {
+                    newTask.photoData = defaultImageData
+                }
+                
+                newTask.dueDate = date
+                newTask.note = notes
+                // Convert TaskState to String
+                newTask.stateRaw = state.rawValue
+                do {
+                    try viewContext.save()
+                } catch {
+                    let nserror = error as NSError
+                    fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                }
                 presentationMode.wrappedValue.dismiss()
             }
             .disabled(false)
