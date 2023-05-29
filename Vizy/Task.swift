@@ -45,37 +45,21 @@ enum TaskState: String, CaseIterable, Comparable {
     }
 }
 
-// Update Task class to inherit from NSManagedObject and rename to CoreDataTask
-//public class CoreDataTask: NSManagedObject, Identifiable {
-//    @NSManaged public var id: UUID
-//    @NSManaged public var photoData: Data
-//    @NSManaged public var dueDate: Date
-//    @NSManaged public var notes: String
-//    @NSManaged public var stateRaw: String
-//
-    // Convert Data to IdentifiableImage
-//    var photo: IdentifiableImage {
-//        get {
-//            let image = UIImage(data: photoData) ?? UIImage()
-//            return IdentifiableImage(uiImage: image)
-//        }
-//        set {
-//            photoData = newValue.uiImage.pngData()!
-//        }
-//    }
-    
-    // Convert String to TaskState
-//    var state: TaskState {
-//        get {
-//            return TaskState(rawValue: stateRaw) ?? .new
-//        }
-//        set {
-//            stateRaw = newValue.rawValue
-//        }
-//    }
-    
-    // Toggle the task state
-//    @objc func toggleState() {
-//        state.toggle()
-//    }
-//}
+extension TaskState {
+    var color: Color {
+        switch self {
+        case .new:
+            return Color.paleGreenColor
+        case .doing:
+            return Color.softYellowColor
+        case .done:
+            return Color.doneTaskColor
+        }
+    }
+}
+
+extension Color {
+    static let paleGreenColor = Color(UIColor(red: 0.30, green: 0.82, blue: 0.22, alpha: 1.00))
+    static let softYellowColor = Color(UIColor(red: 0.98, green: 0.77, blue: 0.19, alpha: 1.00))
+    static let doneTaskColor = Color(UIColor(red: 220/255, green: 221/255, blue: 225/255, alpha: 1.00)) // #dcdde1
+}

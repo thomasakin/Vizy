@@ -11,11 +11,17 @@ import CoreData
 struct NewTaskView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
-    @State private var identifiableImage: IdentifiableImage? = IdentifiableImage(uiImage: UIImage.defaultImage)
+    @Binding var isCreatingNewTask: Bool
+    @State var identifiableImage: IdentifiableImage?
     @State private var state: TaskState = .new
     @State private var date = Date()
     @State private var isShowingImagePicker = false
     @State private var notes = ""
+    
+    init(image: IdentifiableImage?, isCreatingNewTask: Binding<Bool>) {
+        self._isCreatingNewTask = isCreatingNewTask
+        self._identifiableImage = State(initialValue: image ?? IdentifiableImage(uiImage: UIImage.defaultImage))
+    }
 
     var body: some View {
         VStack {
@@ -45,11 +51,9 @@ struct NewTaskView: View {
             TextEditor(text: $notes)
                 .border(Color.gray, width: 0.5)
             Button("Save Task") {
-                let uiImage = identifiableImage?.uiImage ?? UIImage.defaultImage
                 let newTask = CoreDataTask(context: viewContext)
                 newTask.id = UUID()
                 
-                // Convert IdentifiableImage to Data
                 if let imageData = identifiableImage?.uiImage.jpegData(compressionQuality: 1.0) {
                     newTask.photoData = imageData
                 } else if let defaultImageData = UIImage.defaultImage.jpegData(compressionQuality: 1.0) {
@@ -58,8 +62,8 @@ struct NewTaskView: View {
                 
                 newTask.dueDate = date
                 newTask.note = notes
-                // Convert TaskState to String
                 newTask.stateRaw = state.rawValue
+                
                 do {
                     try viewContext.save()
                 } catch {
@@ -72,7 +76,9 @@ struct NewTaskView: View {
         }
         .padding()
         .sheet(isPresented: $isShowingImagePicker) {
-            ImagePicker(selectedImage: self.$identifiableImage)
+            ImagePicker(selectedImage: self.$identifiableImage, onImageSelected: { photoData in
+                identifiableImage = IdentifiableImage(uiImage: UIImage(data: photoData) ?? UIImage.defaultImage)
+            })
         }
     }
 }

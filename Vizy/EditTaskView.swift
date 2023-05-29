@@ -5,7 +5,6 @@
 //  Created by Thomas Akin on 5/18/23.
 //
 
-import Foundation
 import SwiftUI
 import UIKit
 
@@ -79,8 +78,12 @@ struct EditTaskView: View {
         }
         .padding()
         .sheet(isPresented: $isShowingImagePicker) {
-            ImagePicker(selectedImage: self.$identifiableImage)
+            ImagePicker(selectedImage: self.$identifiableImage, onImageSelected: self.onImageSelected)
         }
+    }
+    
+    func onImageSelected(_ imageData: Data) {
+        // You can leave this empty or add any actions you want to perform when an image is selected
     }
 
     private func saveContext() {

@@ -13,13 +13,13 @@ extension Binding where Value: MutableCollection, Value.Index == Int {
         return Binding<Value.Element>(
             get: {
                 return self.wrappedValue[idx]
-        }, set: { (value: Value.Element) -> () in
-            self.wrappedValue[idx] = value
-        })
+            }, set: { (value: Value.Element) -> () in
+                self.wrappedValue[idx] = value
+            })
     }
 }
 
-//Default IdentifiableImage for Initialization
+// Default IdentifiableImage for Initialization
 extension IdentifiableImage {
     static var defaultIdentifiableImage: IdentifiableImage {
         let size = CGSize(width: 1, height: 1)
@@ -36,7 +36,7 @@ extension IdentifiableImage {
     }
 }
 
-//Default Image for Initialization
+// Default Image for Initialization
 extension UIImage {
     static var defaultImage: UIImage {
         let size = CGSize(width: 1, height: 1)

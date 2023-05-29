@@ -5,13 +5,13 @@
 //  Created by Thomas Akin on 5/18/23.
 //
 
-import Foundation
 import SwiftUI
 import UIKit
 
 struct ImagePicker: UIViewControllerRepresentable {
     @Environment(\.presentationMode) private var presentationMode
     @Binding var selectedImage: IdentifiableImage?
+    var onImageSelected: (Data) -> Void
 
     func makeUIViewController(context: UIViewControllerRepresentableContext<ImagePicker>) -> UIImagePickerController {
         let picker = UIImagePickerController()
@@ -36,6 +36,9 @@ struct ImagePicker: UIViewControllerRepresentable {
         func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
             if let uiImage = info[.originalImage] as? UIImage {
                 parent.selectedImage = IdentifiableImage(uiImage: uiImage)
+                if let imageData = uiImage.jpegData(compressionQuality: 1.0) {
+                    parent.onImageSelected(imageData)
+                }
             }
             parent.presentationMode.wrappedValue.dismiss()
         }

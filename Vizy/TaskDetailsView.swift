@@ -5,7 +5,6 @@
 //  Created by Thomas Akin on 5/18/23.
 //
 
-import Foundation
 import SwiftUI
 import CoreData
 
@@ -14,7 +13,6 @@ struct TaskDetailsView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var task: CoreDataTask
 
-    // Add this state variable to handle image fullscreen view
     @State private var isShowingImageFullScreen = false
 
     var body: some View {
@@ -36,6 +34,11 @@ struct TaskDetailsView: View {
                                 isShowingImageFullScreen = false
                             }
                     }
+            } else {
+                Image(systemName: "photo")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(maxWidth: .infinity)
             }
             
             Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
@@ -72,15 +75,13 @@ struct TaskDetailsView: View {
     private func statusColor(for state: TaskState) -> Color {
         switch state {
         case .new:
-            return Color(paleGreenColor)
+            return Color.paleGreenColor
         case .doing:
-            return Color(softYellowColor)
+            return Color.softYellowColor
         case .done:
-            return Color(doneTaskColor)
+            return Color.doneTaskColor
         }
     }
-
-    private let doneTaskColor = UIColor(red: 220/255, green: 221/255, blue: 225/255, alpha: 1.00) // #dcdde1
 
     private func dueDateColor(for date: Date) -> Color {
         let today = Calendar.current.startOfDay(for: Date())
@@ -94,13 +95,13 @@ struct TaskDetailsView: View {
         } else if dueDate > today {
             return Color(red: 113/255, green: 128/255, blue: 147/255)
         } else {
-            return Color(doneTaskColor)
+            return Color.doneTaskColor
         }
     }
-
+    
     private let paleGreenColor = UIColor(red: 0.30, green: 0.82, blue: 0.22, alpha: 1.00)
     private let softYellowColor = UIColor(red: 0.98, green: 0.77, blue: 0.19, alpha: 1.00)
-    private let paleLavenderColor = UIColor(red: 0.61, green: 0.53, blue: 1.00, alpha: 1.00)
+    private let doneTaskColor = UIColor(red: 220/255, green: 221/255, blue: 225/255, alpha: 1.00) // #dcdde1
 
     private func saveContext() {
         do {
