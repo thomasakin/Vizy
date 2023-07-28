@@ -7,6 +7,7 @@
 
 import SwiftUI
 import CoreData
+import Foundation
 import AVFoundation
 
 struct TaskListView: View {
@@ -16,12 +17,12 @@ struct TaskListView: View {
         sortDescriptors: [NSSortDescriptor(keyPath: \CoreDataTask.dueDate, ascending: true)]
     ) private var tasks: FetchedResults<CoreDataTask>
     
-    @State private var selectedPageIndex = 1
+    @State private var selectedPageIndex = 2
     @State private var searchText = ""
     @State private var isShowingImagePicker = false
     @State private var isCameraAuthorized = false
     
-    private let pageTitles = ["All", "New", "Doing", "Done"]
+    private let pageTitles = ["All", "Todo", "Doing", "Done"]
     
     @StateObject private var taskStore: TaskStore
     
@@ -46,9 +47,9 @@ struct TaskListView: View {
             }
         case 1:
             if lowercaseSearchText.isEmpty {
-                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "new" })
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "todo" })
             } else {
-                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "new" }).filter { task in
+                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "todo" }).filter { task in
                     let lowercaseNote = task.note?.lowercased() ?? ""
                     
                     return lowercaseNote.contains(lowercaseSearchText)
@@ -87,43 +88,48 @@ struct TaskListView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                TextField("Search tasks...", text: $searchText)
-                    .padding(.horizontal)
-                    .overlay(
-                        Group {
-                            if !searchText.isEmpty {
-                                Button(action: {
-                                    searchText = ""
-                                }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundColor(.gray)
-                                        .padding(.trailing, 8)
+            ZStack(alignment: .top) {
+                VStack {
+                    TextField("Search tasks...", text: $searchText)
+                        .padding(.horizontal)
+                        .overlay(
+                            Group {
+                                if !searchText.isEmpty {
+                                    Button(action: {
+                                        searchText = ""
+                                    }) {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(.gray)
+                                            .padding(.trailing, 8)
+                                    }
                                 }
-                            }
-                        }, alignment: .trailing
-                    )
-                
-                Picker(selection: $selectedPageIndex, label: Text("Page")) {
-                    ForEach(0..<pageTitles.count, id: \.self) { index in
-                        Text(pageTitles[index])
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .padding()
-
-                TabView(selection: $selectedPageIndex) {
-                    ForEach(0..<pageTitles.count, id: \.self) { index in
-                        TaskListPageView(
-                            title: pageTitles[index],
-                            tasks: filteredTasks,
-                            searchText: $searchText,
-                            pageIndex: index
+                            }, alignment: .trailing
                         )
-                        .environment(\.managedObjectContext, viewContext)
+                        .background(Color.white.edgesIgnoringSafeArea(.all))
+                    
+                    Picker(selection: $selectedPageIndex, label: Text("Page")) {
+                        ForEach(0..<pageTitles.count, id: \.self) { index in
+                            Text(pageTitles[index])
+                        }
                     }
+                    .pickerStyle(SegmentedPickerStyle())
+                    .background(Color.white.edgesIgnoringSafeArea(.all))
+                    
+                    TabView(selection: $selectedPageIndex) {
+                        ForEach(0..<pageTitles.count, id: \.self) { index in
+                            TaskListPageView(
+                                title: pageTitles[index],
+                                tasks: filteredTasks,
+                                searchText: $searchText,
+                                pageIndex: index
+                            )
+                            .environment(\.managedObjectContext, viewContext)
+                        }
+                    }
+                    .background(Color.white.edgesIgnoringSafeArea(.all))
+                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
                 }
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
+                .background(Color.white.edgesIgnoringSafeArea(.all))
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(pageTitles[selectedPageIndex])
@@ -141,7 +147,18 @@ struct TaskListView: View {
             checkCameraAuthorizationStatus()
         }
     }
-    
+
+    private func cellColor(for state: TaskState) -> Color {
+        switch state {
+        case .todo:
+            return Color.paleGreenColor
+        case .doing:
+            return Color.softYellowColor
+        case .done:
+            return Color.doneTaskColor
+        }
+    }
+
     private var cameraButton: some View {
         Button(action: {
             isShowingImagePicker = true
@@ -151,10 +168,11 @@ struct TaskListView: View {
     }
     
     private var addButton: some View {
-        NavigationLink(destination: NewTaskView(image: taskStore.selectedImage, isCreatingNewTask: $taskStore.isCreatingNewTask)) {
+        NavigationLink(destination: NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask)) {
             Image(systemName: "plus")
         }
     }
+
     
     private func checkCameraAuthorizationStatus() {
         let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
@@ -194,6 +212,23 @@ struct TaskListView: View {
         })
         
         UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+    }
+    
+    private func dueDateColor(for date: Date, state: TaskState) -> Color {
+        let today = Calendar.current.startOfDay(for: Date())
+        let dueDate = Calendar.current.startOfDay(for: date)
+
+        if dueDate < today && state != .done {
+            return Color(red: 194/255, green: 54/255, blue: 22/255).opacity(0.65)
+        } else if Calendar.current.isDateInToday(dueDate) {
+            return Color(red: 156/255, green: 136/255, blue: 255/255).opacity(0.65)
+        } else if dueDate > today {
+            return Color(red: 245/255, green: 246/255, blue: 250/255).opacity(0.65)
+        } else if state == .done {
+            return Color(red: 220/255, green: 221/255, blue: 225/255).opacity(0.65)
+        } else {
+            return Color.primary.opacity(0.65)
+        }
     }
     
     private func sortTasks(_ tasks: [CoreDataTask]) -> [CoreDataTask] {

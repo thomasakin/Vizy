@@ -16,6 +16,7 @@ struct VizyApp: App {
         WindowGroup {
             TaskListView()
                 .environment(\.managedObjectContext, appDelegate.persistentContainer.viewContext)
+                .environmentObject(NavigationState())  // Provide NavigationState to all child views
         }
     }
 }

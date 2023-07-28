@@ -45,7 +45,7 @@ struct EditTaskView: View {
             }
 
             Picker("State", selection: Binding(
-                get: { TaskState(rawValue: self.task.stateRaw ?? "") ?? .new },
+                get: { TaskState(rawValue: self.task.stateRaw ?? "") ?? .todo },
                 set: { newValue in self.task.stateRaw = newValue.rawValue }
             )) {
                 ForEach(TaskState.allCases, id: \.self) {
@@ -60,7 +60,12 @@ struct EditTaskView: View {
                         ),
                        displayedComponents: .date)
                 .datePickerStyle(GraphicalDatePickerStyle())
-
+            
+            TextField("Title", text: Binding(
+                get: { self.task.name ?? "" },
+                set: { self.task.name = $0 }
+            ))
+            Spacer()
             TextField("Notes", text: Binding(
                 get: { self.task.note ?? "" },
                 set: { self.task.note = $0 }

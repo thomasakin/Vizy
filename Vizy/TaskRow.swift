@@ -10,6 +10,7 @@ import CoreData
 
 struct TaskRow: View {
     let task: CoreDataTask
+    let statusColor: Color
 
     var body: some View {
         HStack {
@@ -21,11 +22,15 @@ struct TaskRow: View {
                     .frame(width: 80, height: 80)
                     .cornerRadius(8)
             } else {
-                Image(systemName: "photo")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
+                Rectangle()
+                    .fill(Color.yellow)
                     .frame(width: 80, height: 80)
                     .cornerRadius(8)
+                    .overlay(
+                        Text("Todo")
+                            .foregroundColor(.black)
+                            .font(.headline)
+                    )
             }
             
             VStack(alignment: .leading) {
@@ -33,22 +38,33 @@ struct TaskRow: View {
                     .lineLimit(2)
                     .font(.headline)
                 Text(task.dueDate ?? Date(), style: .date)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
                     .font(.subheadline)
             }
             
             Spacer()
             
-            Text(task.stateRaw ?? "")
-                .foregroundColor(task.stateColor)
-                .font(.headline)
+            Image(systemName: "checkmark")
+                .foregroundColor(statusColor)
+                .opacity(TaskState(rawValue: task.stateRaw ?? "") == .done ? 1.0 : 0.0)
         }
+        .background(Color.white.edgesIgnoringSafeArea(.all))
     }
-}
 
-extension CoreDataTask {
-    var stateColor: Color {
-        guard let taskState = TaskState(rawValue: stateRaw ?? "") else { return .primary }
-        return taskState.color
+    private func dueDateColor(for date: Date, state: TaskState) -> Color {
+        let today = Calendar.current.startOfDay(for: Date())
+        let dueDate = Calendar.current.startOfDay(for: date)
+
+        if dueDate < today && state != .done {
+            return Color(red: 194/255, green: 54/255, blue: 22/255)
+        } else if Calendar.current.isDateInToday(dueDate) {
+            return Color(red: 156/255, green: 136/255, blue: 255/255)
+        } else if dueDate > today {
+            return Color(red: 245/255, green: 246/255, blue: 250/255)
+        } else if state == .done {
+            return Color(red: 220/255, green: 221/255, blue: 225/255)
+        } else {
+            return Color.primary
+        }
     }
 }

@@ -9,6 +9,10 @@ import CoreData
 import Combine
 import SwiftUI
 
+class NavigationState: ObservableObject {
+    @Published var selectedTask: CoreDataTask?
+}
+
 class TaskStore: ObservableObject {
     @Published var tasks: [CoreDataTask] = []
     @Published var selectedImage: IdentifiableImage?
@@ -33,9 +37,11 @@ class TaskStore: ObservableObject {
         let newTask = CoreDataTask(context: context)
         newTask.id = UUID()
         newTask.photoData = photoData
-        newTask.stateRaw = TaskState.new.rawValue
+        newTask.stateRaw = TaskState.todo.rawValue
         newTask.dueDate = Date()
         newTask.note = ""
+        newTask.name = ""
+        selectedImage = nil
         saveContext()
         fetchTasks()
     }

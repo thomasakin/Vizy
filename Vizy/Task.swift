@@ -17,13 +17,13 @@ struct IdentifiableImage: Identifiable {
 }
 
 enum TaskState: String, CaseIterable, Comparable {
-    case new = "New"
+    case todo = "Todo"
     case doing = "Doing"
     case done = "Done"
     
     var order: Int {
         switch self {
-        case .new: return 0
+        case .todo: return 0
         case .doing: return 1
         case .done: return 2
         }
@@ -35,12 +35,12 @@ enum TaskState: String, CaseIterable, Comparable {
     
     mutating func toggle() {
         switch self {
-        case .new:
+        case .todo:
             self = .doing
         case .doing:
             self = .done
         case .done:
-            self = .new
+            self = .todo
         }
     }
 }
@@ -48,7 +48,7 @@ enum TaskState: String, CaseIterable, Comparable {
 extension TaskState {
     var color: Color {
         switch self {
-        case .new:
+        case .todo:
             return Color.paleGreenColor
         case .doing:
             return Color.softYellowColor

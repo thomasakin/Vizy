@@ -12,9 +12,9 @@ struct TaskDetailsView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var task: CoreDataTask
-
+    
     @State private var isShowingImageFullScreen = false
-
+    
     var body: some View {
         VStack {
             if let data = task.photoData, let uiImage = UIImage(data: data) {
@@ -43,16 +43,18 @@ struct TaskDetailsView: View {
             
             Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
                 .font(.system(size: 24, weight: .bold))
-                .foregroundColor(statusColor(for: TaskState(rawValue: task.stateRaw ?? "") ?? .new))
+                .foregroundColor(statusColor(for: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
                 .onTapGesture {
                     task.toggleState()
                     saveContext()
                 }
             Text(task.dueDate ?? Date(), style: .date)
                 .strikethrough(TaskState(rawValue: task.stateRaw ?? "") == .done)
-                .foregroundColor(dueDateColor(for: task.dueDate ?? Date()))
-            Text(task.note ?? "")
-
+                .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
+            VStack {
+                Text(task.name ?? "")
+                Text(task.note ?? "")
+            }
             Spacer()
 
             Button(action: {
@@ -64,45 +66,29 @@ struct TaskDetailsView: View {
                     .foregroundColor(.red)
             }
             .padding()
+            .navigationTitle("Task Details")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: EditTaskView(task: task)) {
+                        Text("Edit")
+                    }
+                }
+            }
         }
-        .padding()
-        .navigationTitle("Task Details")
-        .navigationBarItems(trailing: NavigationLink(destination: EditTaskView(task: task)) {
-            Text("Edit")
-        })
+        .background(Color.white.edgesIgnoringSafeArea(.all))
     }
-
+    
     private func statusColor(for state: TaskState) -> Color {
         switch state {
-        case .new:
-            return Color.paleGreenColor
+        case .todo:
+            return Color(red: 68/255, green: 189/255, blue: 50/255)
         case .doing:
-            return Color.softYellowColor
+            return Color(red: 251/255, green: 197/255, blue: 49/255)
         case .done:
-            return Color.doneTaskColor
-        }
-    }
-
-    private func dueDateColor(for date: Date) -> Color {
-        let today = Calendar.current.startOfDay(for: Date())
-        let dueDate = Calendar.current.startOfDay(for: date)
-        let pastDueColor = UIColor(red: 194/255, green: 54/255, blue: 22/255, alpha: 1.00) // #c23616
-
-        if dueDate < today && TaskState(rawValue: task.stateRaw ?? "") != .done {
-            return Color(pastDueColor)
-        } else if Calendar.current.isDateInToday(dueDate) {
-            return Color(UIColor(red: 0/255, green: 168/255, blue: 255/255, alpha: 1.00)) // #00a8ff
-        } else if dueDate > today {
-            return Color(red: 113/255, green: 128/255, blue: 147/255)
-        } else {
-            return Color.doneTaskColor
+            return Color(red: 140/255, green: 122/255, blue: 230/255)
         }
     }
     
-    private let paleGreenColor = UIColor(red: 0.30, green: 0.82, blue: 0.22, alpha: 1.00)
-    private let softYellowColor = UIColor(red: 0.98, green: 0.77, blue: 0.19, alpha: 1.00)
-    private let doneTaskColor = UIColor(red: 220/255, green: 221/255, blue: 225/255, alpha: 1.00) // #dcdde1
-
     private func saveContext() {
         do {
             try viewContext.save()

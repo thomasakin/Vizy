@@ -59,13 +59,30 @@ extension CoreDataTask {
             return
         }
         switch currentState {
-        case .new:
+        case .todo:
             self.stateRaw = TaskState.doing.rawValue
         case .doing:
             self.stateRaw = TaskState.done.rawValue
         case .done:
-            self.stateRaw = TaskState.new.rawValue
+            self.stateRaw = TaskState.todo.rawValue
         }
+    }
+}
+
+func dueDateColor(for date: Date, state: TaskState) -> Color {
+    let today = Calendar.current.startOfDay(for: Date())
+    let dueDate = Calendar.current.startOfDay(for: date)
+
+    if dueDate < today && state != .done {
+        return Color(red: 232/255, green: 65/255, blue: 24/255).opacity(0.75)
+    } else if Calendar.current.isDateInToday(dueDate) {
+        return Color(red: 156/255, green: 136/255, blue: 255/255).opacity(0.75)
+    } else if dueDate > today {
+        return Color(red: 245/255, green: 246/255, blue: 250/255).opacity(0.75)
+    } else if state == .done {
+        return Color(red: 220/255, green: 221/255, blue: 225/255).opacity(0.75)
+    } else {
+        return Color.primary.opacity(0.75)
     }
 }
 
