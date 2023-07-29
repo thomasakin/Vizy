@@ -19,10 +19,8 @@ struct TaskCard: View {
             let uiImage = task.photoData.flatMap(UIImage.init(data:)) ?? UIImage(systemName: "photo")!
             Image(uiImage: uiImage)
                 .resizable()
-                //.scaledToFit()
                 .aspectRatio(contentMode: .fill)
-                .frame(height: 200)
-                .frame(width: 150)
+                .frame(width: UIScreen.main.bounds.width / 3 - 15, height: UIScreen.main.bounds.width / 3 - 15)
                 .clipped()
             VStack(alignment: .leading) {
                 HStack {
@@ -43,7 +41,6 @@ struct TaskCard: View {
                     }
                     .background(
                         Capsule()
-                            //.foregroundColor(Color.black.opacity(0.65))
                             .foregroundColor(TaskState(rawValue: task.stateRaw ?? "")?.color.opacity(0.80) ?? .primary.opacity(0.80))
                             .cornerRadius(8)
                             .padding(.horizontal, -10.0)
@@ -63,8 +60,6 @@ struct TaskCard: View {
             .padding(.all, 10)
         }
         .background(Color.white.edgesIgnoringSafeArea(.all))
-        //.background(Color(red: 0x2f / 255, green: 0x36 / 255, blue: 0x40 / 255))
-        //.background(TaskState(rawValue: task.stateRaw ?? "")?.color.opacity(0.75) ?? .primary.opacity(0.75))
         .cornerRadius(5)
         .shadow(radius: 5)
         .onTapGesture {

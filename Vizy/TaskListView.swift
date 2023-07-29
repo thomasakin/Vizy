@@ -16,63 +16,39 @@ struct TaskListView: View {
         entity: CoreDataTask.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \CoreDataTask.dueDate, ascending: true)]
     ) private var tasks: FetchedResults<CoreDataTask>
-    
-    @State private var selectedPageIndex = 2
+
+    @State private var selectedPageIndex = 0
     @State private var searchText = ""
     @State private var isShowingImagePicker = false
     @State private var isCameraAuthorized = false
-    
-    private let pageTitles = ["All", "Todo", "Doing", "Done"]
-    
+
+    private let pageTitles = ["Todo", "Doing", "Done", "All"]
+
     @StateObject private var taskStore: TaskStore
-    
+
     init() {
         let context = PersistenceController.shared.container.viewContext
         _taskStore = StateObject(wrappedValue: TaskStore(context: context))
     }
-    
+
     private var filteredTasks: [CoreDataTask] {
         let lowercaseSearchText = searchText.lowercased()
         switch selectedPageIndex {
         case 0:
+            return filterTasks(withState: "todo", searchText: lowercaseSearchText)
+        case 1:
+            return filterTasks(withState: "doing", searchText: lowercaseSearchText)
+        case 2:
+            return filterTasks(withState: "done", searchText: lowercaseSearchText)
+        case 3:
             if lowercaseSearchText.isEmpty {
                 return sortTasks(tasks.map { $0 })
             } else {
                 return sortTasks(tasks.map { $0 }).filter { task in
                     let formattedDueDate = task.dueDate != nil ? TaskListView.dateFormatter.string(from: task.dueDate!) : ""
                     let lowercaseNote = task.note?.lowercased() ?? ""
-                    
+
                     return lowercaseNote.contains(lowercaseSearchText) || formattedDueDate.contains(lowercaseSearchText)
-                }
-            }
-        case 1:
-            if lowercaseSearchText.isEmpty {
-                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "todo" })
-            } else {
-                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "todo" }).filter { task in
-                    let lowercaseNote = task.note?.lowercased() ?? ""
-                    
-                    return lowercaseNote.contains(lowercaseSearchText)
-                }
-            }
-        case 2:
-            if lowercaseSearchText.isEmpty {
-                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "doing" })
-            } else {
-                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "doing" }).filter { task in
-                    let lowercaseNote = task.note?.lowercased() ?? ""
-                    
-                    return lowercaseNote.contains(lowercaseSearchText)
-                }
-            }
-        case 3:
-            if lowercaseSearchText.isEmpty {
-                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "done" })
-            } else {
-                return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == "done" }).filter { task in
-                    let lowercaseNote = task.note?.lowercased() ?? ""
-                    
-                    return lowercaseNote.contains(lowercaseSearchText)
                 }
             }
         default:
@@ -106,7 +82,7 @@ struct TaskListView: View {
                             }, alignment: .trailing
                         )
                         .background(Color.white.edgesIgnoringSafeArea(.all))
-                    
+
                     Picker(selection: $selectedPageIndex, label: Text("Page")) {
                         ForEach(0..<pageTitles.count, id: \.self) { index in
                             Text(pageTitles[index])
@@ -114,7 +90,7 @@ struct TaskListView: View {
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     .background(Color.white.edgesIgnoringSafeArea(.all))
-                    
+
                     TabView(selection: $selectedPageIndex) {
                         ForEach(0..<pageTitles.count, id: \.self) { index in
                             TaskListPageView(
@@ -124,6 +100,7 @@ struct TaskListView: View {
                                 pageIndex: index
                             )
                             .environment(\.managedObjectContext, viewContext)
+                            .tag(index)
                         }
                     }
                     .background(Color.white.edgesIgnoringSafeArea(.all))
@@ -166,14 +143,14 @@ struct TaskListView: View {
             Image(systemName: "camera")
         }
     }
-    
+
     private var addButton: some View {
         NavigationLink(destination: NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask)) {
             Image(systemName: "plus")
         }
     }
 
-    
+
     private func checkCameraAuthorizationStatus() {
         let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
         switch cameraAuthorizationStatus {
@@ -187,7 +164,7 @@ struct TaskListView: View {
             isCameraAuthorized = false
         }
     }
-    
+
     private func requestCameraAuthorization() {
         AVCaptureDevice.requestAccess(for: .video) { granted in
             DispatchQueue.main.async {
@@ -195,14 +172,14 @@ struct TaskListView: View {
             }
         }
     }
-    
+
     private func showCameraSettingsAlert() {
         let alert = UIAlertController(
             title: "Camera Access",
             message: "Please allow camera access in Settings to use this feature.",
             preferredStyle: .alert
         )
-        
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         alert.addAction(UIAlertAction(title: "Settings", style: .default) { _ in
             guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else { return }
@@ -210,10 +187,10 @@ struct TaskListView: View {
                 UIApplication.shared.open(settingsURL)
             }
         })
-        
+
         UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
     }
-    
+
     private func dueDateColor(for date: Date, state: TaskState) -> Color {
         let today = Calendar.current.startOfDay(for: Date())
         let dueDate = Calendar.current.startOfDay(for: date)
@@ -230,12 +207,24 @@ struct TaskListView: View {
             return Color.primary.opacity(0.65)
         }
     }
-    
+
     private func sortTasks(_ tasks: [CoreDataTask]) -> [CoreDataTask] {
         return tasks.sorted { (task1, task2) -> Bool in
             guard let dueDate1 = task1.dueDate else { return false }
             guard let dueDate2 = task2.dueDate else { return true }
             return dueDate1 < dueDate2
+        }
+    }
+    
+    private func filterTasks(withState state: String, searchText: String) -> [CoreDataTask] {
+        if searchText.isEmpty {
+            return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == state })
+        } else {
+            return sortTasks(tasks.filter { ($0.stateRaw?.lowercased() ?? "") == state }).filter { task in
+                let lowercaseNote = task.note?.lowercased() ?? ""
+
+                return lowercaseNote.contains(searchText)
+            }
         }
     }
 }
