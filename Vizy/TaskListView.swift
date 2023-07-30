@@ -21,6 +21,8 @@ struct TaskListView: View {
     @State private var searchText = ""
     @State private var isShowingImagePicker = false
     @State private var isCameraAuthorized = false
+    
+    var containerWidth:CGFloat = UIScreen.main.bounds.width - 32.0
 
     private let pageTitles = ["Todo", "Doing", "Done", "All"]
 
@@ -66,22 +68,22 @@ struct TaskListView: View {
         NavigationView {
             ZStack(alignment: .top) {
                 VStack {
-                    TextField("Search tasks...", text: $searchText)
-                        .padding(.horizontal)
-                        .overlay(
-                            Group {
-                                if !searchText.isEmpty {
-                                    Button(action: {
-                                        searchText = ""
-                                    }) {
-                                        Image(systemName: "xmark.circle.fill")
-                                            .foregroundColor(.gray)
-                                            .padding(.trailing, 8)
-                                    }
-                                }
-                            }, alignment: .trailing
-                        )
-                        .background(Color.white.edgesIgnoringSafeArea(.all))
+                    //TextField("Search tasks...", text: $searchText)
+                    //    .padding(.horizontal)
+                    //    .overlay(
+                    //        Group {
+                    //            if !searchText.isEmpty {
+                    //                Button(action: {
+                    //                    searchText = ""
+                    //                }) {
+                    //                    Image(systemName: "xmark.circle.fill")
+                    //                        .foregroundColor(.gray)
+                    //                        .padding(.trailing, 8)
+                    //                }
+                    //            }
+                    //        }, alignment: .trailing
+                    //    )
+                    //    .background(Color.white.edgesIgnoringSafeArea(.all))
 
                     Picker(selection: $selectedPageIndex, label: Text("Page")) {
                         ForEach(0..<pageTitles.count, id: \.self) { index in
@@ -110,7 +112,8 @@ struct TaskListView: View {
             }
             .navigationBarTitleDisplayMode(.inline)
             .navigationTitle(pageTitles[selectedPageIndex])
-            .navigationBarItems(leading: cameraButton, trailing: addButton)
+            //.navigationBarItems(leading: cameraButton, trailing: addButton)
+            .navigationBarItems(leading: searchBar, trailing: HStack {addButton; cameraButton} )
         }
         .sheet(isPresented: $isShowingImagePicker) {
             CameraView(identifiableImage: $taskStore.selectedImage, taskStore: taskStore)
@@ -134,6 +137,26 @@ struct TaskListView: View {
         case .done:
             return Color.doneTaskColor
         }
+    }
+    
+    private var searchBar: some View {
+        TextField("Search tasks...", text: $searchText)
+            .frame(width:containerWidth * 0.33)
+            .padding(.horizontal)
+            .overlay(
+                Group {
+                    if !searchText.isEmpty {
+                        Button(action: {
+                            searchText = ""
+                        }) {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.gray)
+                                .padding(.trailing, 8)
+                        }
+                    }
+                }, alignment: .trailing
+            )
+            .background(Color.white.edgesIgnoringSafeArea(.all))
     }
 
     private var cameraButton: some View {
