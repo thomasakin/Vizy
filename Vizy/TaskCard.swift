@@ -62,7 +62,7 @@ struct TaskCard: View {
         .background(Color.white.edgesIgnoringSafeArea(.all))
         .cornerRadius(5)
         .shadow(radius: 5)
-        .onTapGesture {
+        .onLongPressGesture {
             self.showDetails = true
         }
         .padding(.all, 10)

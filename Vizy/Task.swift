@@ -33,16 +33,16 @@ enum TaskState: String, CaseIterable, Comparable {
         return lhs.order < rhs.order
     }
     
-    mutating func toggle() {
-        switch self {
-        case .todo:
-            self = .doing
-        case .doing:
-            self = .done
-        case .done:
-            self = .todo
-        }
-    }
+//    mutating func toggle() {
+//        switch self {
+//        case .todo:
+//            self = .doing
+//        case .doing:
+//            self = .done
+//        case .done:
+//            self = .todo
+//        }
+//    }
 }
 
 extension TaskState {
