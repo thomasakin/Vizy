@@ -66,12 +66,20 @@ struct TaskDetailsView: View {
                     .foregroundColor(.red)
             }
             .padding()
-            .navigationTitle("Task Details")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: EditTaskView(task: task)) {
-                        Text("Edit")
-                    }
+        }
+        .background(Color.white.edgesIgnoringSafeArea(.all))
+        .navigationTitle("Task Details")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(action: {
+                    self.presentationMode.wrappedValue.dismiss()
+                }) {
+                    Image(systemName: "xmark")
+                }
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                NavigationLink(destination: EditTaskView(task: task)) {
+                    Text("Edit")
                 }
             }
         }

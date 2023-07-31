@@ -16,6 +16,8 @@ struct TaskListView: View {
         entity: CoreDataTask.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \CoreDataTask.dueDate, ascending: true)]
     ) private var tasks: FetchedResults<CoreDataTask>
+    
+    @State private var isShowingSettings = false
 
     @State private var selectedPageIndex = 0
     @State private var searchText = ""
@@ -107,6 +109,16 @@ struct TaskListView: View {
                     }
                     .background(Color.white.edgesIgnoringSafeArea(.all))
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .automatic))
+                    VStack {
+                        Button(action: {
+                            self.isShowingSettings.toggle()
+                        }) {
+                            Image(systemName: "gear")
+                        }
+                        .sheet(isPresented: $isShowingSettings) {
+                            SettingsView()
+                        }
+                    }
                 }
                 .background(Color.white.edgesIgnoringSafeArea(.all))
             }

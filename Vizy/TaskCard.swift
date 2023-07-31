@@ -67,7 +67,9 @@ struct TaskCard: View {
         }
         .padding(.all, 10)
         .sheet(isPresented: $showDetails) {
-            TaskDetailsView(task: task)
+            NavigationView {
+                TaskDetailsView(task: task)
+            }
         }
     }
 
