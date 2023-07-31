@@ -26,7 +26,7 @@ extension IdentifiableImage {
         UIGraphicsBeginImageContext(size)
         let context = UIGraphicsGetCurrentContext()!
 
-        context.setFillColor(UIColor.gray.cgColor)
+        context.setFillColor(UIColor.systemYellow.cgColor)
         context.fill(CGRect(origin: .zero, size: size))
 
         let image = UIGraphicsGetImageFromCurrentImageContext()!
@@ -43,7 +43,7 @@ extension UIImage {
         UIGraphicsBeginImageContext(size)
         let context = UIGraphicsGetCurrentContext()!
 
-        context.setFillColor(UIColor.gray.cgColor)
+        context.setFillColor(UIColor.systemYellow.cgColor)
         context.fill(CGRect(origin: .zero, size: size))
 
         let image = UIGraphicsGetImageFromCurrentImageContext()!

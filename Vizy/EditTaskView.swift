@@ -12,9 +12,9 @@ struct EditTaskView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var task: CoreDataTask
-
     @State private var isShowingImagePicker = false
-    @State private var identifiableImage: IdentifiableImage?
+    @State private var imagePickerSourceType: UIImagePickerController.SourceType = .photoLibrary
+    @State var identifiableImage: IdentifiableImage?
 
     init(task: CoreDataTask) {
         self.task = task
@@ -42,6 +42,25 @@ struct EditTaskView: View {
                     .onTapGesture {
                         self.isShowingImagePicker = true
                     }
+            }
+
+            HStack {
+                Button(action: {
+                    isShowingImagePicker = true
+                    imagePickerSourceType = .photoLibrary
+                }) {
+                    Image(systemName: "photo.on.rectangle.angled")
+                }
+                Button(action: {
+                    isShowingImagePicker = true
+                    if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                        imagePickerSourceType = .camera
+                    } else {
+                        imagePickerSourceType = .photoLibrary
+                    }
+                }) {
+                    Image(systemName: "camera")
+                }
             }
 
             Picker("State", selection: Binding(
@@ -83,7 +102,7 @@ struct EditTaskView: View {
         }
         .padding()
         .sheet(isPresented: $isShowingImagePicker) {
-            ImagePicker(selectedImage: self.$identifiableImage, onImageSelected: self.onImageSelected)
+            ImagePicker(selectedImage: self.$identifiableImage, onImageSelected: self.onImageSelected, sourceType: imagePickerSourceType)
         }
     }
     
