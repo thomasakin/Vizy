@@ -28,12 +28,7 @@ struct TaskListView: View {
 
     private let pageTitles = ["Todo", "Doing", "Done", "All"]
 
-    @StateObject private var taskStore: TaskStore
-
-    init() {
-        let context = PersistenceController.shared.container.viewContext
-        _taskStore = StateObject(wrappedValue: TaskStore(context: context))
-    }
+    @StateObject var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
 
     private var filteredTasks: [CoreDataTask] {
         let lowercaseSearchText = searchText.lowercased()
@@ -99,7 +94,7 @@ struct TaskListView: View {
                         ForEach(0..<pageTitles.count, id: \.self) { index in
                             TaskListPageView(
                                 title: pageTitles[index],
-                                tasks: filteredTasks,
+                                taskStore: taskStore,
                                 searchText: $searchText,
                                 pageIndex: index
                             )

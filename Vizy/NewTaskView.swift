@@ -24,6 +24,7 @@ struct NewTaskView: View {
     @State private var isRecording = false
     @State private var speechText = ""
     @StateObject var speechRecognizer = SpeechRecognizer()
+    @StateObject var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
     
     enum RecordingButton {
         case none
@@ -108,26 +109,9 @@ struct NewTaskView: View {
                 }
                 Spacer()
                 Button("Save Task") {
-                    let newTask = CoreDataTask(context: viewContext)
-                    newTask.id = UUID()
-                    
-                    if let imageData = identifiableImage?.uiImage.jpegData(compressionQuality: 1.0) {
-                        newTask.photoData = imageData
-                    } else if let defaultImageData = UIImage.defaultImage.jpegData(compressionQuality: 1.0) {
-                        newTask.photoData = defaultImageData
-                    }
-                    
-                    newTask.dueDate = date
-                    newTask.note = notes
-                    newTask.name = myname
-                    newTask.stateRaw = state.rawValue
-                    
-                    do {
-                        try viewContext.save()
-                    } catch {
-                        let nserror = error as NSError
-                        fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-                    }
+                    let imageData = identifiableImage?.uiImage.jpegData(compressionQuality: 1.0) ?? UIImage.defaultImage.jpegData(compressionQuality: 1.0)
+                    taskStore.createTask(name: myname, note: notes, dueDate: date, state: state, photoData: imageData!)
+                    taskStore.fetchTasks()
                     presentationMode.wrappedValue.dismiss()
                 }
                 .disabled(false)

@@ -54,19 +54,19 @@ extension UIImage {
 }
 
 extension CoreDataTask {
-    func toggleState() {
-        guard let currentState = TaskState(rawValue: self.stateRaw ?? "") else {
-            return
-        }
-        switch currentState {
-        case .todo:
-            self.stateRaw = TaskState.doing.rawValue
-        case .doing:
-            self.stateRaw = TaskState.done.rawValue
-        case .done:
-            self.stateRaw = TaskState.todo.rawValue
-        }
-    }
+    //func toggleState() {
+    //    guard let currentState = TaskState(rawValue: self.stateRaw ?? "") else {
+    //        return
+    //    }
+    //    switch currentState {
+    //    case .todo:
+    //        self.stateRaw = TaskState.doing.rawValue
+    //    case .doing:
+    //        self.stateRaw = TaskState.done.rawValue
+    //    case .done:
+    //    self.stateRaw = TaskState.todo.rawValue
+    //    }
+    // }
 }
 
 func dueDateColor(for date: Date, state: TaskState) -> Color {

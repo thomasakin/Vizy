@@ -12,6 +12,7 @@ struct TaskDetailsView: View {
     @Environment(\.presentationMode) var presentationMode
     @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var task: CoreDataTask
+    @ObservedObject var taskStore: TaskStore
     
     @State private var isShowingImageFullScreen = false
     
@@ -44,10 +45,10 @@ struct TaskDetailsView: View {
             Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
                 .font(.system(size: 24, weight: .bold))
                 .foregroundColor(statusColor(for: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
-                .onTapGesture {
-                    task.toggleState()
-                    saveContext()
-                }
+                //.onLongPressGesture {
+                //    taskStore.toggleState(forTask: task)
+                //    saveContext()
+                //}
             Text(task.dueDate ?? Date(), style: .date)
                 .strikethrough(TaskState(rawValue: task.stateRaw ?? "") == .done)
                 .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))

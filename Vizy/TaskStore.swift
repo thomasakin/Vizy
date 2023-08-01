@@ -24,6 +24,12 @@ class TaskStore: ObservableObject {
         fetchTasks()
     }
 
+    func deleteTask(_ task: CoreDataTask) {
+        context.delete(task)
+        saveContext()
+        fetchTasks()
+    }
+    
     func fetchTasks() {
         let request: NSFetchRequest<CoreDataTask> = CoreDataTask.fetchRequest()
         do {
@@ -33,15 +39,36 @@ class TaskStore: ObservableObject {
         }
     }
 
-    func createTask(withPhotoData photoData: Data) {
+    func createTask(name: String, note: String, dueDate: Date, state: TaskState, photoData: Data) {
         let newTask = CoreDataTask(context: context)
         newTask.id = UUID()
         newTask.photoData = photoData
-        newTask.stateRaw = TaskState.todo.rawValue
-        newTask.dueDate = Date()
-        newTask.note = ""
-        newTask.name = ""
-        selectedImage = nil
+        newTask.dueDate = dueDate
+        newTask.note = note
+        newTask.name = name
+        newTask.stateRaw = state.rawValue
+
+        do {
+            try context.save()
+            fetchTasks()  // Fetch tasks again to include the new task
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+    }
+    
+    func toggleState(forTask task: CoreDataTask) {
+        guard let currentState = TaskState(rawValue: task.stateRaw ?? "") else {
+            return
+        }
+        switch currentState {
+        case .todo:
+            task.stateRaw = TaskState.doing.rawValue
+        case .doing:
+            task.stateRaw = TaskState.done.rawValue
+        case .done:
+            task.stateRaw = TaskState.todo.rawValue
+        }
         saveContext()
         fetchTasks()
     }
@@ -54,4 +81,5 @@ class TaskStore: ObservableObject {
             fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
         }
     }
+
 }
