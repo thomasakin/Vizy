@@ -12,6 +12,7 @@ import AVFoundation
 
 struct TaskListView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var settings: Settings  
     @FetchRequest(
         entity: CoreDataTask.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \CoreDataTask.dueDate, ascending: true)]

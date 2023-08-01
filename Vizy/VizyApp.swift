@@ -11,6 +11,8 @@ import CoreData
 @main
 struct VizyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var settings = Settings()
+    
 
     var body: some Scene {
         WindowGroup {

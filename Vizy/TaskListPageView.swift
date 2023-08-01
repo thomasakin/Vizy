@@ -21,6 +21,7 @@ struct TaskListPageView: View {
     @Binding var searchText: String
     let pageIndex: Int
 
+    @EnvironmentObject var settings: Settings  
 
     var body: some View {
         ScrollView {

@@ -10,6 +10,7 @@ import SwiftUI
 struct TaskCard: View {
     @ObservedObject var task: CoreDataTask
     @ObservedObject var taskStore: TaskStore
+    @EnvironmentObject var settings: Settings
     @State var showDetails = false
     @GestureState var isLongPress = false
 
@@ -83,19 +84,25 @@ struct TaskCard: View {
     }
 
     func getFormattedDate(from date: Date?) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-
-        let currentYear = Calendar.current.component(.year, from: Date())
-        let targetYear = Calendar.current.component(.year, from: date ?? Date())
-
-        if currentYear == targetYear {
-            formatter.dateFormat = "MM/dd"
+        if settings.dueDateDisplay == 1, let dueDate = date {
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.day], from: Date(), to: dueDate)
+            return "\(components.day ?? 0)"
         } else {
-            formatter.dateFormat = "MM/dd/yy"
-        }
+            let formatter = DateFormatter()
+            formatter.locale = Locale.current
 
-        return date.map(formatter.string) ?? ""
+            let currentYear = Calendar.current.component(.year, from: Date())
+            let targetYear = Calendar.current.component(.year, from: date ?? Date())
+
+            if currentYear == targetYear {
+                formatter.dateFormat = "MM/dd"
+            } else {
+                formatter.dateFormat = "MM/dd/yy"
+            }
+
+            return date.map(formatter.string) ?? ""
+        }
     }
 
     private func saveContext() {
