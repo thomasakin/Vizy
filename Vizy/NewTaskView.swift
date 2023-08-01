@@ -24,7 +24,7 @@ struct NewTaskView: View {
     @State private var isRecording = false
     @State private var speechText = ""
     @StateObject var speechRecognizer = SpeechRecognizer()
-    @StateObject var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
+    @ObservedObject var taskStore: TaskStore
     
     enum RecordingButton {
         case none
@@ -35,9 +35,10 @@ struct NewTaskView: View {
 
     @State private var recordingButton: RecordingButton = .none
     
-    init(image: IdentifiableImage?, isCreatingNewTask: Binding<Bool>) {
+    init(image: IdentifiableImage?, isCreatingNewTask: Binding<Bool>, taskStore: TaskStore) {
         self._isCreatingNewTask = isCreatingNewTask
         self._identifiableImage = State(initialValue: image ?? IdentifiableImage(uiImage: UIImage.defaultImage))
+        self.taskStore = taskStore
     }
 
     var body: some View {

@@ -127,7 +127,7 @@ struct TaskListView: View {
             .edgesIgnoringSafeArea(.all)
         }
         .sheet(isPresented: $taskStore.isCreatingNewTask) {
-            NewTaskView(image: taskStore.selectedImage, isCreatingNewTask: $taskStore.isCreatingNewTask)
+            NewTaskView(image: taskStore.selectedImage, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore)
             .environment(\.managedObjectContext, viewContext)
         }
         .onAppear {
@@ -175,7 +175,7 @@ struct TaskListView: View {
     }
 
     private var addButton: some View {
-        NavigationLink(destination: NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask)) {
+        NavigationLink(destination: NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore)) {
             Image(systemName: "plus")
         }
     }
