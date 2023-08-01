@@ -59,8 +59,7 @@ struct TaskDetailsView: View {
             Spacer()
 
             Button(action: {
-                viewContext.delete(task)
-                saveContext()
+                taskStore.deleteTask(task)
                 presentationMode.wrappedValue.dismiss()
             }) {
                 Text("Delete")
