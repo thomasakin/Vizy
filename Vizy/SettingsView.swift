@@ -22,7 +22,7 @@ class Settings: ObservableObject {
 }
 
 struct SettingsView: View {
-    @ObservedObject var settings = Settings()
+    @EnvironmentObject var settings: Settings
     @Environment(\.presentationMode) var presentationMode
     let dueDateDisplayOptions = ["Show Due Dates", "Show Days Until Due"]
 

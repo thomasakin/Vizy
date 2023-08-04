@@ -95,7 +95,7 @@ struct TaskListView: View {
                     }
                     .pickerStyle(SegmentedPickerStyle())
                     .background(Color.white.edgesIgnoringSafeArea(.all))
-
+ 
                     TabView(selection: $selectedPageIndex) {
                         ForEach(0..<pageTitles.count, id: \.self) { index in
                             TaskListPageView(

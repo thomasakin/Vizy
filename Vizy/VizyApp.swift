@@ -19,6 +19,7 @@ struct VizyApp: App {
             TaskListView()
                 .environment(\.managedObjectContext, appDelegate.persistentContainer.viewContext)
                 .environmentObject(NavigationState())  // Provide NavigationState to all child views
+                .environmentObject(settings) // Provide Settings to all child views
         }
     }
 }

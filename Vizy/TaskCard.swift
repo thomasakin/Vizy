@@ -33,9 +33,10 @@ struct TaskCard: View {
                             .font(.system(size: UIFont.preferredFont(forTextStyle: .body).pointSize - 4))
                         Spacer()
                         Text(getFormattedDate(from: task.dueDate))
-                            .strikethrough(TaskState(rawValue: task.stateRaw ?? "") == .done)
-                            .foregroundColor(Color.black)
-                            .font(.system(size: UIFont.preferredFont(forTextStyle: .body).pointSize - 4))
+                            .font(.system(size: getFontSize(for: task)))
+                            .bold()
+                            .foregroundColor(getTextColor(for: task))
+                            .strikethrough(task.stateRaw == TaskState.done.rawValue)
                     }
                     .background(
                         Capsule()
@@ -102,6 +103,25 @@ struct TaskCard: View {
             }
 
             return date.map(formatter.string) ?? ""
+        }
+    }
+    
+    private func getFontSize(for task: CoreDataTask) -> CGFloat {
+        //return task.stateRaw == TaskState.done.rawValue ? 16 : 16 // Adjust sizes as needed
+        return (UIFont.preferredFont(forTextStyle: .body).pointSize - 4)
+    }
+    
+    private func getTextColor(for task: CoreDataTask) -> Color {
+        guard let dueDate = task.dueDate else { return .black }
+        
+        if task.stateRaw == TaskState.done.rawValue {
+            return .gray
+        } else if dueDate < Date() {
+            return .red // Dark red color
+        } else if Calendar.current.isDateInToday(dueDate) {
+            return .orange // Dark orange color
+        } else {
+            return .black // Default color for future dates
         }
     }
 
