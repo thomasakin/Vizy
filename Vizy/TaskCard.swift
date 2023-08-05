@@ -28,19 +28,25 @@ struct TaskCard: View {
             VStack(alignment: .leading) {
                 HStack {
                     HStack {
-                        Text(task.name ?? "")
-                            .foregroundColor(Color.black)
-                            .font(.system(size: UIFont.preferredFont(forTextStyle: .body).pointSize - 4))
+                        //Text(task.name ?? "")
+                        //Text(task.name ?? "")
+                        //    .foregroundColor(Color.black)
+                        //    .font(.system(size: UIFont.preferredFont(forTextStyle: .body).pointSize - 4))
+                        //Spacer()
+                        Text(task.stateRaw)
+                            .font(.system(size: getFontSize(for: task)))
+                            .bold()
+                            .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
                         Spacer()
                         Text(getFormattedDate(from: task.dueDate))
                             .font(.system(size: getFontSize(for: task)))
                             .bold()
-                            .foregroundColor(getTextColor(for: task))
+                            .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
                             .strikethrough(task.stateRaw == TaskState.done.rawValue)
                     }
                     .background(
                         Capsule()
-                            .foregroundColor(TaskState(rawValue: task.stateRaw ?? "")?.color.opacity(0.80) ?? .primary.opacity(0.80))
+                            .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw!) ?? .todo)).color.opacity(0.80) ?? .primary.opacity(0.80))
                             .cornerRadius(8)
                             .padding(.horizontal, -10.0)
                             .scaleEffect(isLongPress ? 1.05 : 1.0)
@@ -111,20 +117,6 @@ struct TaskCard: View {
         return (UIFont.preferredFont(forTextStyle: .body).pointSize - 4)
     }
     
-    private func getTextColor(for task: CoreDataTask) -> Color {
-        guard let dueDate = task.dueDate else { return .black }
-        
-        if task.stateRaw == TaskState.done.rawValue {
-            return .gray
-        } else if dueDate < Date() {
-            return .red // Dark red color
-        } else if Calendar.current.isDateInToday(dueDate) {
-            return .orange // Dark orange color
-        } else {
-            return .black // Default color for future dates
-        }
-    }
-
     private func saveContext() {
         do {
             try viewContext.save()

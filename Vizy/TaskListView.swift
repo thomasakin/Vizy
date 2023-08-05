@@ -140,17 +140,6 @@ struct TaskListView: View {
             checkCameraAuthorizationStatus()
         }
     }
-
-    private func cellColor(for state: TaskState) -> Color {
-        switch state {
-        case .todo:
-            return Color.paleGreenColor
-        case .doing:
-            return Color.softYellowColor
-        case .done:
-            return Color.doneTaskColor
-        }
-    }
     
     private var searchBar: some View {
         TextField("Search tasks...", text: $searchText)
@@ -185,7 +174,6 @@ struct TaskListView: View {
             Image(systemName: "plus")
         }
     }
-
 
     private func checkCameraAuthorizationStatus() {
         let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
@@ -225,23 +213,6 @@ struct TaskListView: View {
         })
 
         UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
-    }
-
-    private func dueDateColor(for date: Date, state: TaskState) -> Color {
-        let today = Calendar.current.startOfDay(for: Date())
-        let dueDate = Calendar.current.startOfDay(for: date)
-
-        if dueDate < today && state != .done {
-            return Color(red: 194/255, green: 54/255, blue: 22/255).opacity(0.65)
-        } else if Calendar.current.isDateInToday(dueDate) {
-            return Color(red: 156/255, green: 136/255, blue: 255/255).opacity(0.65)
-        } else if dueDate > today {
-            return Color(red: 245/255, green: 246/255, blue: 250/255).opacity(0.65)
-        } else if state == .done {
-            return Color(red: 220/255, green: 221/255, blue: 225/255).opacity(0.65)
-        } else {
-            return Color.primary.opacity(0.65)
-        }
     }
 
     private func sortTasks(_ tasks: [CoreDataTask]) -> [CoreDataTask] {

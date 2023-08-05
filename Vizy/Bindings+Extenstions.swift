@@ -106,18 +106,30 @@ extension Color {
     }
 }
 
+func stateColor(state: TaskState) -> Color {
+    if state == TaskState.done {
+        return Color.doneColor
+    } else if state == TaskState.todo {
+        return Color.todoColor
+    } else if state == TaskState.doing {
+        return Color.doingColor
+    } else {
+        return Color.primary
+    }
+}
+
 func dueDateColor(for date: Date, state: TaskState) -> Color {
     let today = Calendar.current.startOfDay(for: Date())
     let dueDate = Calendar.current.startOfDay(for: date)
 
     if dueDate < today {
-        return Color.pastDueFontColor.opacity(0.75)
+        return Color.pastDueFontColor
     } else if Calendar.current.isDateInToday(dueDate) {
-        return Color.dueTodayFontColor.opacity(0.75)
+        return Color.dueTodayFontColor
     } else if dueDate > today {
-        return Color.futureDueFontColor.opacity(0.75)
+        return Color.futureDueFontColor
     } else {
-        return Color.primary.opacity(0.75)
+        return Color.primary
     }
 }
 
