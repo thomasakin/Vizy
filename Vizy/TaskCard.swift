@@ -52,7 +52,7 @@ struct TaskCard: View {
                     }
                     .background(
                         Capsule()
-                            .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw!) ?? .todo).opacity(0.90))
+                            .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo).opacity(0.90))
                             .cornerRadius(8)
                             .padding(.horizontal, -10.0)
                             .scaleEffect(isLongPress ? 1.05 : 1.0)

@@ -64,7 +64,7 @@ struct TaskDetailsView: View {
                 .frame(height: getFontSize(for: task) + 8)
                 .background(
                     Capsule()
-                        .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw!) ?? .todo))
+                        .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo).opacity(0.90))
                         .cornerRadius(8)
                         //.padding(.horizontal, -10.0)
                         .scaleEffect(isLongPress ? 1.05 : 1.0)
@@ -142,8 +142,7 @@ struct TaskDetailsView: View {
             }
             .padding(8) // Add horizontal padding
             Button(action: {
-                viewContext.delete(task)
-                saveContext()
+                taskStore.deleteTask(task)
                 presentationModeBinding.wrappedValue.dismiss()
             }) {
                 Image(systemName: "trash")

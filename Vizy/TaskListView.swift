@@ -12,6 +12,7 @@ import AVFoundation
 
 struct TaskListView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @EnvironmentObject var taskStore: TaskStore
     @EnvironmentObject var settings: Settings  
     @FetchRequest(
         entity: CoreDataTask.entity(),
@@ -30,7 +31,7 @@ struct TaskListView: View {
     private let pageTitles = ["Todo", "Doing", "Done", "All"]
 
     //@StateObject var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
-    @StateObject var taskStore: TaskStore
+    //@StateObject var taskStore: TaskStore
     
     init() {
         _taskStore = StateObject(wrappedValue: TaskStore(context: PersistenceController.shared.container.viewContext))
