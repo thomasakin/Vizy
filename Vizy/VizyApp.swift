@@ -12,14 +12,14 @@ import AVFoundation
 
 @main
 struct VizyApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    //@StateObject private var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
+    //@UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    @StateObject private var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
     @StateObject private var settings = Settings()
     @State private var showNewTaskView = false
     @State private var showCameraView = false
     @State private var isShowingImagePicker = false
     @State private var isCameraAuthorized = CameraAuthorization.isCameraAuthorized
-    @StateObject private var taskStore: TaskStore
+    //@StateObject private var taskStore: TaskStore
 
     init() {
         let context = PersistenceController.shared.container.viewContext
@@ -28,8 +28,9 @@ struct VizyApp: App {
     
     var body: some Scene {
         WindowGroup {
+            let _ = print("VizyApp->TaskListView")
             TaskListView()
-                .environment(\.managedObjectContext, appDelegate.persistentContainer.viewContext)
+                .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
                 .environmentObject(NavigationState())  // Provide NavigationState to all child views
                 .environmentObject(settings) // Provide Settings to all child views
                 .environmentObject(taskStore)
@@ -39,7 +40,7 @@ struct VizyApp: App {
                 }
                 .sheet(isPresented: $taskStore.isCreatingNewTask) {
                     NewTaskView(image: taskStore.selectedImage, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore)
-                        .environment(\.managedObjectContext, appDelegate.persistentContainer.viewContext)
+                        .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
                 }
                 .onAppear {
                     CameraAuthorization.checkCameraAuthorizationStatus()
@@ -60,29 +61,30 @@ struct VizyApp: App {
                 .keyboardShortcut("c", modifiers: .command)
             }
         }
+        let _ = print("TLV: End")
     }
 }
 
 
 class AppDelegate: NSObject, UIApplicationDelegate {
-    var persistentContainer: NSPersistentContainer!
+    //var persistentContainer: NSPersistentContainer!
 
-    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-        persistentContainer = NSPersistentContainer(name: "Vizy")
-        persistentContainer.loadPersistentStores { (storeDescription, error) in
-            if let error = error {
-                fatalError("Unresolved error \(error)")
-            }
-        }
-        return true
-    }
+//    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+//        persistentContainer = NSPersistentContainer(name: "Vizy")
+//        persistentContainer.loadPersistentStores { (storeDescription, error) in
+//            if let error = error {
+//                fatalError("Unresolved error \(error)")
+//            }
+//        }
+//        return true
+//    }
 
     func applicationWillTerminate(_ application: UIApplication) {
         saveContext()
     }
 
     func saveContext() {
-        let context = persistentContainer.viewContext
+        let context = PersistenceController.shared.container.viewContext
         if context.hasChanges {
             do {
                 try context.save()

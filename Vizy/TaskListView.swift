@@ -13,7 +13,7 @@ import AVFoundation
 struct TaskListView: View {
     @Environment(\.managedObjectContext) private var viewContext
     @EnvironmentObject var taskStore: TaskStore
-    @EnvironmentObject var settings: Settings  
+    @EnvironmentObject var settings: Settings
     @FetchRequest(
         entity: CoreDataTask.entity(),
         sortDescriptors: [NSSortDescriptor(keyPath: \CoreDataTask.dueDate, ascending: true)]
@@ -62,7 +62,9 @@ struct TaskListView: View {
     }()
 
     var body: some View {
+        let _ = print("TLV Start")
         NavigationView {
+            let _ = print("TLW: ZStack")
             ZStack(alignment: .top) {
                 VStack {
                     Picker(selection: $selectedPageIndex, label: Text("Page")) {
