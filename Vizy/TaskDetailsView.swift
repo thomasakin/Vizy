@@ -15,6 +15,7 @@ struct TaskDetailsView: View {
     @State var showDetails = false
     @GestureState var isLongPress = false
 
+    @Environment(\.presentationMode) var presentationModeBinding: Binding<PresentationMode>
     @Environment(\.managedObjectContext) private var viewContext
     
     @State private var isShowingImageFullScreen = false
@@ -38,7 +39,7 @@ struct TaskDetailsView: View {
                     Capsule()
                         .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw!) ?? .todo))
                         .cornerRadius(8)
-                        //.padding(.horizontal, -10.0)
+                        .padding(.horizontal, -10.0)
                         .scaleEffect(isLongPress ? 1.05 : 1.0)
                         .animation(.easeInOut, value: isLongPress)
                         .gesture(
@@ -97,12 +98,12 @@ struct TaskDetailsView: View {
         .onTapGesture {
             self.showDetails = true
         }
-        .padding(.all, 10)
-        .sheet(isPresented: $showDetails) {
-            NavigationView {
-                TaskDetailsView(task: task, taskStore: taskStore)
-            }
-        }
+        .padding()
+        .navigationBarItems(trailing: Button(action: {
+            presentationModeBinding.wrappedValue.dismiss()
+        }) {
+            Image(systemName: "xmark")
+        })
     }
 
     func getFormattedDate(from date: Date?) -> String {
