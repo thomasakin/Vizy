@@ -73,9 +73,12 @@ extension Color {
     static let todoColor = Color(hex: "#FEC601")
     static let doingColor = Color(hex: "#3DA5D9")
     static let doneColor = Color(hex: "#73BFB8")
-    static let pastDueFontColor = Color(hex: "#000000")
-    static let dueTodayFontColor = Color(hex: "#FFFFFF")
-    static let futureDueFontColor = Color(hex: "#737373")
+    static let pastDueFontColor = Color(hex: "#af0808")
+    static let todoDueTodayFontColor = Color(hex: "#EA7317")
+    static let doingDueTodayFontColor = Color(hex: "#A85413")
+    static let todoFutureDueFontColor = Color(hex: "#F4F4EC")
+    static let doingFutureDueFontColor = Color(hex: "#E5E4E2")
+    static let doneFontColor = Color(hex: "#4F5933")
 }
 
 extension Color {
@@ -122,19 +125,20 @@ func dueDateColor(for date: Date, state: TaskState) -> Color {
     let today = Calendar.current.startOfDay(for: Date())
     let dueDate = Calendar.current.startOfDay(for: date)
 
-    if dueDate < today {
+    if state == .done {
+        return Color.doneFontColor
+    } else if dueDate < today {
         return Color.pastDueFontColor
-    } else if Calendar.current.isDateInToday(dueDate) {
-        return Color.dueTodayFontColor
-    } else if dueDate > today {
-        return Color.futureDueFontColor
+    } else if state == .todo && Calendar.current.isDateInToday(dueDate) {
+        return Color.todoDueTodayFontColor
+    } else if state == .doing && Calendar.current.isDateInToday(dueDate) {
+        return Color.doingDueTodayFontColor
+    } else if state == .todo && dueDate > today {
+        return Color.todoFutureDueFontColor
+    } else if state == .doing && dueDate > today {
+        return Color.doingFutureDueFontColor
     } else {
         return Color.primary
     }
 }
 
-//extension Task {
-//    var isOverdue: Bool {
-//        return Date() > dueDate
-//    }
-//}

@@ -33,7 +33,7 @@ struct TaskCard: View {
                         //    .foregroundColor(Color.black)
                         //    .font(.system(size: UIFont.preferredFont(forTextStyle: .body).pointSize - 4))
                         //Spacer()
-                        Text(task.stateRaw)
+                        Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
                             .font(.system(size: getFontSize(for: task)))
                             .bold()
                             .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
@@ -46,7 +46,7 @@ struct TaskCard: View {
                     }
                     .background(
                         Capsule()
-                            .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw!) ?? .todo)).color.opacity(0.80) ?? .primary.opacity(0.80))
+                            .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw!) ?? .todo))
                             .cornerRadius(8)
                             .padding(.horizontal, -10.0)
                             .scaleEffect(isLongPress ? 1.05 : 1.0)
@@ -114,7 +114,7 @@ struct TaskCard: View {
     
     private func getFontSize(for task: CoreDataTask) -> CGFloat {
         //return task.stateRaw == TaskState.done.rawValue ? 16 : 16 // Adjust sizes as needed
-        return (UIFont.preferredFont(forTextStyle: .body).pointSize - 4)
+        return (UIFont.preferredFont(forTextStyle: .body).pointSize - 1)
     }
     
     private func saveContext() {
