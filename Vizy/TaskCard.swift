@@ -16,6 +16,7 @@ struct TaskCard: View {
 
     @Environment(\.managedObjectContext) private var viewContext
 
+    @available(iOS 16.0, *)
     var body: some View {
         ZStack {
             // Default image if photoData can't be converted to UIImage
@@ -40,6 +41,7 @@ struct TaskCard: View {
                         Spacer()
                         Text(getFormattedDate(from: task.dueDate))
                             .font(.system(size: getFontSize(for: task)))
+                            .minimumScaleFactor(0.01)
                             .bold()
                             .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
                             .strikethrough(task.stateRaw == TaskState.done.rawValue)

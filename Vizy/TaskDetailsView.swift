@@ -17,6 +17,8 @@ struct TaskDetailsView: View {
     
     @State private var isShowingImagePicker = false
     @State private var selectedImage: IdentifiableImage?
+    @State private var isShowingDatePicker = false
+    @State private var selectedDate: Date = Date()
 
     @Environment(\.presentationMode) var presentationModeBinding: Binding<PresentationMode>
     @Environment(\.managedObjectContext) private var viewContext
@@ -32,11 +34,22 @@ struct TaskDetailsView: View {
                         .bold()
                         .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
                     Spacer()
-                    Text(getFormattedDate(from: task.dueDate))
-                        .font(.system(size: getFontSize(for: task)))
-                        .bold()
+                    Text(task.dueDate ?? Date(), style: .date)
+                        .strikethrough(TaskState(rawValue: task.stateRaw ?? "") == .done)
                         .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
-                        .strikethrough(task.stateRaw == TaskState.done.rawValue)
+                        .onTapGesture {
+                            selectedDate = task.dueDate ?? Date()
+                            isShowingDatePicker = true
+                        }
+                        .popover(isPresented: $isShowingDatePicker) {
+                            DatePicker("Select Date", selection: $selectedDate, displayedComponents: .date)
+                                .datePickerStyle(GraphicalDatePickerStyle())
+                                .onChange(of: selectedDate) { newValue in
+                                    task.dueDate = newValue
+                                    saveContext()
+                                    isShowingDatePicker = false
+                                }
+                        }
                 }
                 .background(
                     Capsule()
