@@ -2,22 +2,59 @@
 //  TaskDetailsView.swift
 //  Vizy
 //
-//  Created by Thomas Akin on 5/18/23.
+//  Created by Thomas Akin on 8/5/23.
 //
 
+import Foundation
 import SwiftUI
-import CoreData
 
 struct TaskDetailsView: View {
-    @Environment(\.presentationMode) var presentationMode
-    @Environment(\.managedObjectContext) private var viewContext
     @ObservedObject var task: CoreDataTask
     @ObservedObject var taskStore: TaskStore
+    @EnvironmentObject var settings: Settings
+    @State var showDetails = false
+    @GestureState var isLongPress = false
+
+    @Environment(\.managedObjectContext) private var viewContext
     
     @State private var isShowingImageFullScreen = false
-    
+
     var body: some View {
         VStack {
+            HStack {
+                HStack {
+                    Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
+                        .font(.system(size: getFontSize(for: task)))
+                        .bold()
+                        .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
+                    Spacer()
+                    Text(getFormattedDate(from: task.dueDate))
+                        .font(.system(size: getFontSize(for: task)))
+                        .bold()
+                        .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
+                        .strikethrough(task.stateRaw == TaskState.done.rawValue)
+                }
+                .background(
+                    Capsule()
+                        .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw!) ?? .todo))
+                        .cornerRadius(8)
+                        //.padding(.horizontal, -10.0)
+                        .scaleEffect(isLongPress ? 1.05 : 1.0)
+                        .animation(.easeInOut, value: isLongPress)
+                        .gesture(
+                            LongPressGesture(minimumDuration: 0.5)
+                                .updating($isLongPress) { currentState, gestureState, transaction in
+                                    gestureState = currentState
+                                }
+                                .onEnded { _ in
+                                    taskStore.toggleState(forTask: task)
+                                    saveContext()
+                                }
+                        )
+                )
+            }
+            // Default image if photoData can't be converted to UIImage
+            let uiImage = task.photoData.flatMap(UIImage.init(data:)) ?? UIImage(systemName: "photo")!
             if let data = task.photoData, let uiImage = UIImage(data: data) {
                 let identifiableImage = IdentifiableImage(uiImage: uiImage)
                 Image(uiImage: identifiableImage.uiImage)
@@ -41,60 +78,58 @@ struct TaskDetailsView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity)
             }
-            
-            Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(statusColor(for: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
-                //.onLongPressGesture {
-                //    taskStore.toggleState(forTask: task)
-                //    saveContext()
-                //}
-            Text(task.dueDate ?? Date(), style: .date)
-                .strikethrough(TaskState(rawValue: task.stateRaw ?? "") == .done)
-                .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
-            VStack {
-                Text(task.name ?? "")
+            VStack(alignment: .leading) {
                 Text(task.note ?? "")
+                    .font(.system(size: UIFont.preferredFont(forTextStyle: .body).pointSize + 2))
+                    .foregroundColor(Color.gray)
+                    .background(
+                        Capsule()
+                            .fill(Color.white)
+                            .cornerRadius(8)
+                            .padding(.horizontal, -10.0)
+                    )
             }
-            Spacer()
+            .padding(.all, 10)
+        }
+        .background(Color.white)
+        .cornerRadius(5)
+        .shadow(radius: 5)
+        .onTapGesture {
+            self.showDetails = true
+        }
+        .padding(.all, 10)
+        .sheet(isPresented: $showDetails) {
+            NavigationView {
+                TaskDetailsView(task: task, taskStore: taskStore)
+            }
+        }
+    }
 
-            Button(action: {
-                taskStore.deleteTask(task)
-                presentationMode.wrappedValue.dismiss()
-            }) {
-                Text("Delete")
-                    .foregroundColor(.red)
+    func getFormattedDate(from date: Date?) -> String {
+        if settings.dueDateDisplay == 1, let dueDate = date {
+            let calendar = Calendar.current
+            let components = calendar.dateComponents([.day], from: Date(), to: dueDate)
+            return "\(components.day ?? 0)"
+        } else {
+            let formatter = DateFormatter()
+            formatter.locale = Locale.current
+
+            let currentYear = Calendar.current.component(.year, from: Date())
+            let targetYear = Calendar.current.component(.year, from: date ?? Date())
+
+            if currentYear == targetYear {
+                formatter.dateFormat = "MM/dd"
+            } else {
+                formatter.dateFormat = "MM/dd/yy"
             }
-            .padding()
+
+            return date.map(formatter.string) ?? ""
         }
-        .background(Color.white.edgesIgnoringSafeArea(.all))
-        .navigationTitle("Task Details")
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    self.presentationMode.wrappedValue.dismiss()
-                }) {
-                    Image(systemName: "xmark")
-                }
-            }
-            ToolbarItem(placement: .navigationBarTrailing) {
-                NavigationLink(destination: EditTaskView(task: task)) {
-                    Text("Edit")
-                }
-            }
-        }
-        .background(Color.white.edgesIgnoringSafeArea(.all))
     }
     
-    private func statusColor(for state: TaskState) -> Color {
-        switch state {
-        case .todo:
-            return Color(red: 68/255, green: 189/255, blue: 50/255)
-        case .doing:
-            return Color(red: 251/255, green: 197/255, blue: 49/255)
-        case .done:
-            return Color(red: 140/255, green: 122/255, blue: 230/255)
-        }
+    private func getFontSize(for task: CoreDataTask) -> CGFloat {
+        //return task.stateRaw == TaskState.done.rawValue ? 16 : 16 // Adjust sizes as needed
+        return (UIFont.preferredFont(forTextStyle: .body).pointSize + 8)
     }
     
     private func saveContext() {

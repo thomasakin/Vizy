@@ -71,23 +71,6 @@ struct TaskListView: View {
         NavigationView {
             ZStack(alignment: .top) {
                 VStack {
-                    //TextField("Search tasks...", text: $searchText)
-                    //    .padding(.horizontal)
-                    //    .overlay(
-                    //        Group {
-                    //            if !searchText.isEmpty {
-                    //                Button(action: {
-                    //                    searchText = ""
-                    //                }) {
-                    //                    Image(systemName: "xmark.circle.fill")
-                    //                        .foregroundColor(.gray)
-                    //                        .padding(.trailing, 8)
-                    //                }
-                    //            }
-                    //        }, alignment: .trailing
-                    //    )
-                    //    .background(Color.white.edgesIgnoringSafeArea(.all))
-
                     Picker(selection: $selectedPageIndex, label: Text("Page")) {
                         ForEach(0..<pageTitles.count, id: \.self) { index in
                             Text(pageTitles[index])
