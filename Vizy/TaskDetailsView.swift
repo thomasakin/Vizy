@@ -14,6 +14,9 @@ struct TaskDetailsView: View {
     @EnvironmentObject var settings: Settings
     @State var showDetails = false
     @GestureState var isLongPress = false
+    
+    @State private var isShowingImagePicker = false
+    @State private var selectedImage: IdentifiableImage?
 
     @Environment(\.presentationMode) var presentationModeBinding: Binding<PresentationMode>
     @Environment(\.managedObjectContext) private var viewContext
@@ -55,30 +58,47 @@ struct TaskDetailsView: View {
                 )
             }
             // Default image if photoData can't be converted to UIImage
-            let uiImage = task.photoData.flatMap(UIImage.init(data:)) ?? UIImage(systemName: "photo")!
+            //let uiImage = task.photoData.flatMap(UIImage.init(data:)) ?? UIImage(systemName: "photo")!
             if let data = task.photoData, let uiImage = UIImage(data: data) {
                 let identifiableImage = IdentifiableImage(uiImage: uiImage)
                 Image(uiImage: identifiableImage.uiImage)
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .onTapGesture {
-                        isShowingImageFullScreen = true
-                    }
-                    .fullScreenCover(isPresented: $isShowingImageFullScreen) {
-                        Image(uiImage: identifiableImage.uiImage)
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .edgesIgnoringSafeArea(.all)
-                            .onTapGesture {
-                                isShowingImageFullScreen = false
-                            }
+                        isShowingImagePicker = true
                     }
             } else {
                 Image(systemName: "photo")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(maxWidth: .infinity)
+                    .onTapGesture {
+                        isShowingImagePicker = true
+                    }
             }
+            //if let data = task.photoData, let uiImage = UIImage(data: data) {
+            //    let identifiableImage = IdentifiableImage(uiImage: uiImage)
+            //    Image(uiImage: identifiableImage.uiImage)
+            //        .resizable()
+            //        .aspectRatio(contentMode: .fit)
+            //        .onTapGesture {
+            //            isShowingImageFullScreen = true
+            //        }
+            //        .fullScreenCover(isPresented: $isShowingImageFullScreen) {
+            //            Image(uiImage: identifiableImage.uiImage)
+            //                .resizable()
+            //                .aspectRatio(contentMode: .fit)
+            //                .edgesIgnoringSafeArea(.all)
+            //                .onTapGesture {
+            //                    isShowingImageFullScreen = false
+            //                }
+            //        }
+            //} else {
+            //    Image(systemName: "photo")
+            //        .resizable()
+            //        .aspectRatio(contentMode: .fit)
+            //        .frame(maxWidth: .infinity)
+            //}
             VStack(alignment: .leading) {
                 Text(task.note ?? "")
                     .font(.system(size: UIFont.preferredFont(forTextStyle: .body).pointSize + 2))
@@ -104,8 +124,14 @@ struct TaskDetailsView: View {
         }) {
             Image(systemName: "xmark")
         })
+        .sheet(isPresented: $isShowingImagePicker) {
+            ImagePicker(selectedImage: $selectedImage, onImageSelected: { imageData in
+                task.photoData = imageData
+                saveContext()
+            }, sourceType: .photoLibrary)
+        }
     }
-
+    
     func getFormattedDate(from date: Date?) -> String {
         if settings.dueDateDisplay == 1, let dueDate = date {
             let calendar = Calendar.current
