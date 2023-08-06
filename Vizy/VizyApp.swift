@@ -19,10 +19,11 @@ struct VizyApp: App {
     @State private var showCameraView = false
     @State private var isShowingImagePicker = false
     @State private var isCameraAuthorized = CameraAuthorization.isCameraAuthorized
-    @StateObject var taskStore: TaskStore
+    @StateObject private var taskStore: TaskStore
 
     init() {
-        _taskStore = StateObject(wrappedValue: TaskStore(context: PersistenceController.shared.container.viewContext))
+        let context = PersistenceController.shared.container.viewContext
+        _taskStore = StateObject(wrappedValue: TaskStore(context: context))
     }
     
     var body: some Scene {

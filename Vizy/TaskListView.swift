@@ -30,13 +30,6 @@ struct TaskListView: View {
 
     private let pageTitles = ["Todo", "Doing", "Done", "All"]
 
-    //@StateObject var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
-    //@StateObject var taskStore: TaskStore
-    
-    //init() {
-    //    _taskStore = StateObject(wrappedValue: TaskStore(context: PersistenceController.shared.container.viewContext))
-    //}
-
     private var filteredTasks: [CoreDataTask] {
         let lowercaseSearchText = searchText.lowercased()
         switch selectedPageIndex {
