@@ -195,7 +195,9 @@ struct TaskListView: View {
             }
         })
 
-        UIApplication.shared.windows.first?.rootViewController?.present(alert, animated: true)
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            windowScene.windows.first?.rootViewController?.present(alert, animated: true)
+        }
     }
 
     private func sortTasks(_ tasks: [CoreDataTask]) -> [CoreDataTask] {

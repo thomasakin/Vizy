@@ -123,7 +123,6 @@ struct TaskDetailsView: View {
                             .padding(.horizontal, -10.0)
                     )
             }
-            .padding(.all, 10)
         }
         .background(Color.white)
         .cornerRadius(5)
