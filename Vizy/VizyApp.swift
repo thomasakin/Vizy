@@ -13,13 +13,17 @@ import AVFoundation
 @main
 struct VizyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @StateObject private var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
+    //@StateObject private var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
     @StateObject private var settings = Settings()
     @State private var showNewTaskView = false
     @State private var showCameraView = false
     @State private var isShowingImagePicker = false
     @State private var isCameraAuthorized = CameraAuthorization.isCameraAuthorized
+    @StateObject var taskStore: TaskStore
 
+    init() {
+        _taskStore = StateObject(wrappedValue: TaskStore(context: PersistenceController.shared.container.viewContext))
+    }
     
     var body: some Scene {
         WindowGroup {
