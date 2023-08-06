@@ -19,6 +19,9 @@ struct TaskDetailsView: View {
     @State private var selectedImage: IdentifiableImage?
     @State private var isShowingDatePicker = false
     @State private var selectedDate: Date = Date()
+    @State private var isEditingNote = false // State to control the note editing pop-up
+    @State private var editedNote: String = "" // State to hold the edited note
+
 
     @Environment(\.presentationMode) var presentationModeBinding: Binding<PresentationMode>
     @Environment(\.managedObjectContext) private var viewContext
@@ -132,6 +135,10 @@ struct TaskDetailsView: View {
                             .cornerRadius(8)
                             .padding(.horizontal, -10.0)
                     )
+                    .onTapGesture {
+                        editedNote = task.note ?? "" // Initialize the edited note with the current note
+                        isEditingNote = true // Show the note editing pop-up
+                    }
             }
             .padding(8) // Add horizontal padding
         }
@@ -151,6 +158,29 @@ struct TaskDetailsView: View {
                 task.photoData = imageData
                 saveContext()
             }, sourceType: .photoLibrary)
+        }
+        .sheet(isPresented: $isEditingNote) {
+            // Note editing pop-up
+            VStack {
+                HStack {
+                    Spacer()
+                    Button(action: {
+                        isEditingNote = false // Dismiss the pop-up
+                    }) {
+                        Image(systemName: "xmark")
+                            .padding()
+                    }
+                }
+                TextEditor(text: $editedNote) // Text editor for the note
+                    .padding()
+                Button("Save") {
+                    task.note = editedNote // Save the edited note
+                    saveContext()
+                    isEditingNote = false // Dismiss the pop-up
+                }
+                .padding()
+            }
+            .padding()
         }
     }
     

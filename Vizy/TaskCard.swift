@@ -71,6 +71,8 @@ struct TaskCard: View {
                 }
                 Spacer()
                 Text(task.note ?? "")
+                    .lineLimit(3) // Limit to three lines
+                    .truncationMode(.tail) // Add ellipsis if the text is truncated
                     .font(.system(size: UIFont.preferredFont(forTextStyle: .body).pointSize - 2))
                     .foregroundColor(Color.white)
                     .background(
