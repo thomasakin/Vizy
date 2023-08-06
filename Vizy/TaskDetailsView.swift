@@ -141,6 +141,15 @@ struct TaskDetailsView: View {
                     }
             }
             .padding(8) // Add horizontal padding
+            Button(action: {
+                viewContext.delete(task)
+                saveContext()
+                presentationModeBinding.wrappedValue.dismiss()
+            }) {
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+            }
+            .padding()
         }
         .background(Color.white)
         .cornerRadius(5)
