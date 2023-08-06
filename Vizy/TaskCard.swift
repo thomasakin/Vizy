@@ -16,7 +16,7 @@ struct TaskCard: View {
 
     @Environment(\.managedObjectContext) private var viewContext
 
-    @available(iOS 16.0, *)
+    //@available(iOS 16.0, *)
     var body: some View {
         ZStack {
             // Default image if photoData can't be converted to UIImage
