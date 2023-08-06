@@ -26,13 +26,14 @@ struct TaskDetailsView: View {
     @State private var isShowingImageFullScreen = false
 
     var body: some View {
-        VStack {
+        VStack(spacing: 20) {
             HStack {
-                HStack {
+                HStack() {
                     Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
                         .font(.system(size: getFontSize(for: task)))
                         .bold()
                         .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
+                        .padding(.leading)
                     Spacer()
                     Text(task.dueDate ?? Date(), style: .date)
                         .strikethrough(TaskState(rawValue: task.stateRaw ?? "") == .done)
@@ -49,13 +50,20 @@ struct TaskDetailsView: View {
                                     saveContext()
                                     isShowingDatePicker = false
                                 }
+                            Button("Save") {
+                                task.dueDate = selectedDate
+                                saveContext()
+                                isShowingDatePicker = false
+                            }
                         }
+                        .padding(.trailing)
                 }
+                .frame(height: getFontSize(for: task) + 8)
                 .background(
                     Capsule()
                         .foregroundColor(stateColor(state: TaskState(rawValue: task.stateRaw!) ?? .todo))
                         .cornerRadius(8)
-                        .padding(.horizontal, -10.0)
+                        //.padding(.horizontal, -10.0)
                         .scaleEffect(isLongPress ? 1.05 : 1.0)
                         .animation(.easeInOut, value: isLongPress)
                         .gesture(
@@ -69,7 +77,9 @@ struct TaskDetailsView: View {
                                 }
                         )
                 )
+                .padding(4)
             }
+            .padding(.top)
             // Default image if photoData can't be converted to UIImage
             //let uiImage = task.photoData.flatMap(UIImage.init(data:)) ?? UIImage(systemName: "photo")!
             if let data = task.photoData, let uiImage = UIImage(data: data) {
@@ -123,6 +133,7 @@ struct TaskDetailsView: View {
                             .padding(.horizontal, -10.0)
                     )
             }
+            .padding(8) // Add horizontal padding
         }
         .background(Color.white)
         .cornerRadius(5)
@@ -130,7 +141,6 @@ struct TaskDetailsView: View {
         .onTapGesture {
             self.showDetails = true
         }
-        .padding()
         .navigationBarItems(trailing: Button(action: {
             presentationModeBinding.wrappedValue.dismiss()
         }) {
