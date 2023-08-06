@@ -28,10 +28,10 @@ struct VizyApp: App {
     var body: some Scene {
         WindowGroup {
             TaskListView()
-                .environmentObject(taskStore) 
                 .environment(\.managedObjectContext, appDelegate.persistentContainer.viewContext)
                 .environmentObject(NavigationState())  // Provide NavigationState to all child views
                 .environmentObject(settings) // Provide Settings to all child views
+                .environmentObject(taskStore)
                 .sheet(isPresented: $isShowingImagePicker) {
                     CameraView(identifiableImage: $taskStore.selectedImage, taskStore: taskStore)
                         .edgesIgnoringSafeArea(.all)
