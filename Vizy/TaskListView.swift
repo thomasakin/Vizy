@@ -24,7 +24,7 @@ struct TaskListView: View {
     @State private var selectedPageIndex = 0
     @State private var searchText = ""
     @State private var isShowingImagePicker = false
-    @State private var isCameraAuthorized = false
+    @State private var isCameraAuthorized = CameraAuthorization.isCameraAuthorized
     
     var containerWidth:CGFloat = UIScreen.main.bounds.width - 32.0
 
@@ -121,8 +121,10 @@ struct TaskListView: View {
             .environment(\.managedObjectContext, viewContext)
         }
         .onAppear {
-            checkCameraAuthorizationStatus()
+            CameraAuthorization.checkCameraAuthorizationStatus()
+            isCameraAuthorized = CameraAuthorization.isCameraAuthorized
         }
+
     }
     
     private var searchBar: some View {

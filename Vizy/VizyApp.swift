@@ -13,12 +13,13 @@ import AVFoundation
 @main
 struct VizyApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    @EnvironmentObject var taskStore: TaskStore // Initialize TaskStore at the app level
+    @StateObject private var taskStore = TaskStore(context: PersistenceController.shared.container.viewContext)
     @StateObject private var settings = Settings()
     @State private var showNewTaskView = false
     @State private var showCameraView = false
     @State private var isShowingImagePicker = false
-    @State private var isCameraAuthorized = false
+    @State private var isCameraAuthorized = CameraAuthorization.isCameraAuthorized
+
     
     var body: some Scene {
         WindowGroup {
@@ -36,8 +37,10 @@ struct VizyApp: App {
                         .environment(\.managedObjectContext, appDelegate.persistentContainer.viewContext)
                 }
                 .onAppear {
-                    checkCameraAuthorizationStatus()
+                    CameraAuthorization.checkCameraAuthorizationStatus()
+                    isCameraAuthorized = CameraAuthorization.isCameraAuthorized
                 }
+
         }
         .commands {
             CommandMenu("Tasks") {

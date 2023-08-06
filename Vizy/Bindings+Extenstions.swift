@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import AVFoundation
 
 extension Binding where Value: MutableCollection, Value.Index == Int {
     func element(_ idx: Int) -> Binding<Value.Element> {
@@ -142,3 +143,48 @@ func dueDateColor(for date: Date, state: TaskState) -> Color {
     }
 }
 
+struct CameraAuthorization {
+    static var isCameraAuthorized = false
+
+    static func checkCameraAuthorizationStatus() {
+        let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
+        switch cameraAuthorizationStatus {
+        case .notDetermined:
+            requestCameraAuthorization()
+        case .authorized:
+            isCameraAuthorized = true
+        case .restricted, .denied:
+            isCameraAuthorized = false
+        @unknown default:
+            isCameraAuthorized = false
+        }
+    }
+
+    static func requestCameraAuthorization() {
+        AVCaptureDevice.requestAccess(for: .video) { granted in
+            DispatchQueue.main.async {
+                self.isCameraAuthorized = granted
+            }
+        }
+    }
+
+    static func showCameraSettingsAlert() {
+        let alert = UIAlertController(
+            title: "Camera Access",
+            message: "Please allow camera access in Settings to use this feature.",
+            preferredStyle: .alert
+        )
+
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Settings", style: .default) { _ in
+            guard let settingsURL = URL(string: UIApplication.openSettingsURLString) else { return }
+            if UIApplication.shared.canOpenURL(settingsURL) {
+                UIApplication.shared.open(settingsURL)
+            }
+        })
+
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            windowScene.windows.first?.rootViewController?.present(alert, animated: true)
+        }
+    }
+}
