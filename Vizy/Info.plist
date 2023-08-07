@@ -2,6 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>UIApplicationShortcutItems</key>
+      <array>
+          <dict>
+              <key>UIApplicationShortcutItemTitle</key>
+              <string>New Task</string>
+              <key>UIApplicationShortcutItemType</key>
+              <string>com.thomasakin.Vizy.newtask</string>
+              <key>UIApplicationShortcutItemIconType</key>
+              <string>UIApplicationShortcutIconTypeAdd</string>
+          </dict>
+          <dict>
+              <key>UIApplicationShortcutItemTitle</key>
+              <string>Photo Task</string>
+              <key>UIApplicationShortcutItemType</key>
+              <string>com.thomasakin.Vizy.phototask</string>
+              <key>UIApplicationShortcutItemIconType</key>
+              <string>UIApplicationShortcutIconTypeCapturePhoto</string>
+          </dict>
+      </array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

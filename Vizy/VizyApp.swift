@@ -20,6 +20,7 @@ struct VizyApp: App {
     @State private var isShowingImagePicker = false
     @State private var isCameraAuthorized = CameraAuthorization.isCameraAuthorized
     //@StateObject private var taskStore: TaskStore
+    @Environment(\.managedObjectContext) var managedObjectContext
 
     init() {
         let context = PersistenceController.shared.container.viewContext
@@ -39,7 +40,7 @@ struct VizyApp: App {
                         .edgesIgnoringSafeArea(.all)
                 }
                 .sheet(isPresented: $taskStore.isCreatingNewTask) {
-                    NewTaskView(image: taskStore.selectedImage, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore)
+                    NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore, context: managedObjectContext)
                         .environment(\.managedObjectContext, PersistenceController.shared.container.viewContext)
                 }
                 .onAppear {
@@ -79,6 +80,8 @@ class AppDelegate: NSObject, UIApplicationDelegate {
 //        return true
 //    }
 
+    let contentView = TaskListView()
+    
     func applicationWillTerminate(_ application: UIApplication) {
         saveContext()
     }
@@ -94,4 +97,30 @@ class AppDelegate: NSObject, UIApplicationDelegate {
             }
         }
     }
+    
+    func windowScene(_ windowScene: UIWindowScene, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {
+        guard let shortcutType = shortcutItem.type.components(separatedBy: ".").last else {
+            completionHandler(false)
+            return
+        }
+
+        switch shortcutType {
+        case "newtask":
+            if let window = windowScene.windows.first,
+               let rootView = window.rootViewController as? UIHostingController<TaskListView> {
+                rootView.rootView.taskStore.isCreatingNewTask = true
+            }
+        case "phototask":
+            if let window = windowScene.windows.first,
+               let rootView = window.rootViewController as? UIHostingController<TaskListView> {
+                rootView.rootView.isShowingCameraView = true
+            }
+        default:
+            completionHandler(false)
+            return
+        }
+
+        completionHandler(true)
+    }
+    
 }

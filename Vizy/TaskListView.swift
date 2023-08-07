@@ -12,6 +12,7 @@ import AVFoundation
 
 struct TaskListView: View {
     @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.managedObjectContext) var managedObjectContext
     @EnvironmentObject var taskStore: TaskStore
     @EnvironmentObject var settings: Settings
     @FetchRequest(
@@ -20,10 +21,11 @@ struct TaskListView: View {
     ) private var tasks: FetchedResults<CoreDataTask>
     
     @State private var isShowingSettings = false
-
+    @State var isShowingCameraView: Bool = false
     @State private var selectedPageIndex = 0
     @State private var searchText = ""
     @State private var isShowingImagePicker = false
+    @State private var capturedImage: UIImage?
     @State private var isCameraAuthorized = CameraAuthorization.isCameraAuthorized
     
     var containerWidth:CGFloat = UIScreen.main.bounds.width - 32.0
@@ -112,9 +114,17 @@ struct TaskListView: View {
             .edgesIgnoringSafeArea(.all)
         }
         .sheet(isPresented: $taskStore.isCreatingNewTask) {
-            NewTaskView(image: taskStore.selectedImage, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore)
+            NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore, context: managedObjectContext)
             .environment(\.managedObjectContext, viewContext)
         }
+//        .sheet(isPresented: $isShowingCameraView, onDismiss: {
+//            // Handle the captured image here, and navigate to NewTaskView
+//            if let capturedImage = capturedImage {
+//                // Code to navigate to NewTaskView with the captured image
+//            }
+//        }) {
+//            CameraView(image: $capturedImage)
+//        }
         .onAppear {
             CameraAuthorization.checkCameraAuthorizationStatus()
             isCameraAuthorized = CameraAuthorization.isCameraAuthorized
@@ -151,7 +161,7 @@ struct TaskListView: View {
     }
 
     private var addButton: some View {
-        NavigationLink(destination: NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore)) {
+        NavigationLink(destination: NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore, context: managedObjectContext)) {
             Image(systemName: "plus")
         }
     }
