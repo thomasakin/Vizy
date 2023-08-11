@@ -48,7 +48,7 @@ struct NewTaskView: View {
         VStack(spacing: 20) {
             HStack {
                 HStack() {
-                    Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "")
+                    Text(TaskState(rawValue: task.stateRaw ?? "")?.rawValue ?? "Todo")
                         .font(.system(size: getFontSize(for: task)))
                         .bold()
                         .foregroundColor(dueDateColor(for: task.dueDate ?? Date(), state: TaskState(rawValue: task.stateRaw ?? "") ?? .todo))
