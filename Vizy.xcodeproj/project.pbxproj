@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		113C75D72A86ABCD0068C48D /* DefaultNewTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113C75D62A86ABCD0068C48D /* DefaultNewTaskView.swift */; };
 		114916192A16A245004B1926 /* VizyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114916182A16A245004B1926 /* VizyApp.swift */; };
 		1149161D2A16A250004B1926 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1149161C2A16A250004B1926 /* Assets.xcassets */; };
 		114916202A16A250004B1926 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1149161F2A16A250004B1926 /* Preview Assets.xcassets */; };
@@ -29,6 +30,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		113C75D62A86ABCD0068C48D /* DefaultNewTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultNewTaskView.swift; sourceTree = "<group>"; };
 		114916152A16A245004B1926 /* Vizy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vizy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		114916182A16A245004B1926 /* VizyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VizyApp.swift; sourceTree = "<group>"; };
 		1149161C2A16A250004B1926 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -104,6 +106,7 @@
 				11CA0F8B2A7F376F00BE4979 /* TaskDetailsView.swift */,
 				115845BF2A80743900439C3B /* NewTaskView.swift */,
 				114916342A16A30A004B1926 /* OldNewTaskView.swift */,
+				113C75D62A86ABCD0068C48D /* DefaultNewTaskView.swift */,
 			);
 			path = Vizy;
 			sourceTree = "<group>";
@@ -196,6 +199,7 @@
 				114916382A16A332004B1926 /* ImagePicker.swift in Sources */,
 				119F71072A77D6AF006B9F91 /* SettingsView.swift in Sources */,
 				11CA0F8C2A7F376F00BE4979 /* TaskDetailsView.swift in Sources */,
+				113C75D72A86ABCD0068C48D /* DefaultNewTaskView.swift in Sources */,
 				1149162C2A16A28A004B1926 /* TaskStore.swift in Sources */,
 				11DC1D4A2A2448780086367C /* TaskListPageView.swift in Sources */,
 				115845C02A80743900439C3B /* NewTaskView.swift in Sources */,

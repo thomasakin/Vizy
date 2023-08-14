@@ -108,10 +108,25 @@ struct TaskListView: View {
             .navigationTitle(pageTitles[selectedPageIndex])
             //.navigationBarItems(leading: cameraButton, trailing: addButton)
             .navigationBarItems(leading: searchBar, trailing: HStack {addButton; cameraButton} )
+            
+            NavigationLink(destination: TaskDetailsView(task: taskStore.selectedTask!, taskStore: taskStore), isActive: $taskStore.isCreatingNewTask) {
+                EmptyView()
+            }
+            
         }
         .sheet(isPresented: $isShowingImagePicker) {
             CameraView(identifiableImage: $taskStore.selectedImage, taskStore: taskStore)
-            .edgesIgnoringSafeArea(.all)
+                .edgesIgnoringSafeArea(.all)
+                .onDisappear {
+                    if let image = taskStore.selectedImage?.uiImage {
+                        let imageData = image.jpegData(compressionQuality: 1.0) ?? UIImage.defaultImage.jpegData(compressionQuality: 1.0)
+                        taskStore.createTask(name: "", note: "", dueDate: Date(), state: .todo, photoData: imageData)
+                        if let newTask = taskStore.tasks.last {
+                            taskStore.selectedTask = newTask
+                            taskStore.isCreatingNewTask = true
+                        }
+                    }
+                }
         }
         .sheet(isPresented: $taskStore.isCreatingNewTask) {
             NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore, context: managedObjectContext)
@@ -161,10 +176,17 @@ struct TaskListView: View {
     }
 
     private var addButton: some View {
-        NavigationLink(destination: NewTaskView(image: nil, isCreatingNewTask: $taskStore.isCreatingNewTask, taskStore: taskStore, context: managedObjectContext)) {
+        Button(action: {
+            taskStore.createDefaultTask()
+            if let newTask = taskStore.tasks.last {
+                taskStore.selectedTask = newTask
+                taskStore.isCreatingNewTask = true
+            }
+        }) {
             Image(systemName: "plus")
         }
     }
+    
 
     private func checkCameraAuthorizationStatus() {
         let cameraAuthorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)

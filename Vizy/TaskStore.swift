@@ -39,6 +39,7 @@ class TaskStore: ObservableObject {
         }
     }
 
+    // We don't currently use name
     func createTask(name: String, note: String, dueDate: Date, state: TaskState, photoData: Data) {
         let newTask = CoreDataTask(context: context)
         newTask.id = UUID()
@@ -55,7 +56,30 @@ class TaskStore: ObservableObject {
             let nserror = error as NSError
             fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
         }
+        isCreatingNewTask = true
     }
+    
+    func createDefaultTask() {
+        let newTask = CoreDataTask(context: context)
+        let imageData = selectedImage?.uiImage.jpegData(compressionQuality: 1.0) ?? UIImage.defaultImage.jpegData(compressionQuality: 1.0)
+        let state: TaskState = .todo
+        newTask.id = UUID()
+        newTask.photoData = imageData
+        newTask.dueDate = Date()
+        newTask.note = ""
+        newTask.name = ""
+        newTask.stateRaw = state.rawValue
+
+        do {
+            try context.save()
+            fetchTasks()  // Fetch tasks again to include the new task
+        } catch {
+            let nserror = error as NSError
+            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+        }
+        isCreatingNewTask = true
+    }
+    
     
     func toggleState(forTask task: CoreDataTask) {
         guard let currentState = TaskState(rawValue: task.stateRaw ?? "") else {
